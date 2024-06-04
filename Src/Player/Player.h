@@ -41,7 +41,8 @@ public:
 	inline float GetRotateY() { return m_vRot.y; }
 	// 更新したデータを反映させる
 	void Update();
-
+	// 座標更新(NextPos代入)
+	void UpdataPos() { m_vPos = m_vNextPos; }
 private:
 	enum tagPlayerState {
 		PLAYER_STATE_WAIT,		// 待機中
@@ -53,6 +54,7 @@ private:
 	};
 
 	VECTOR m_vSpeed;
+	VECTOR m_vNextPos;	// 次のフレームの座標
 
 	tagPlayerState m_eState;	// プレイヤーの状態
 
@@ -82,4 +84,7 @@ private:
 	// 関数ポインタ
 	void(CPlayer:: * m_pFunc[ANIMID_NUM])() = { &CPlayer::ExecDefault,&CPlayer::ExecWalk,&CPlayer::ExecRun,&CPlayer::ExecWait,
 		&CPlayer::ExecUpDown,&CPlayer::ExecShake,&CPlayer::ExecPiano,&CPlayer::ExecDance };
+
+	// 移動している方向取得(上下左右奥前)
+	void GetMoveDirection(bool* _dirArray);
 };

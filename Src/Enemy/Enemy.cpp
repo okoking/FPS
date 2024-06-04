@@ -33,7 +33,7 @@ void CEnemy::Draw() {
 #ifndef MY_DEBUG
 		VECTOR Pos = vPos;
 		Pos.y += radius;
-		DrawSphere3D(Pos, radius + 6.0f, 16, GetColor(255, 255, 255), GetColor(255, 255, 255), true);
+		DrawSphere3D(Pos, radius, 16, GetColor(255, 255, 255), GetColor(255, 255, 255), true);
 
 #endif // !MY_DEBUG
 	}

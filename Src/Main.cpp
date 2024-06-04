@@ -1,6 +1,7 @@
 //ウィンドウを表示するプログラム（ひな形）
 
 #include "DxLib.h"	//DXライブラリのインクルード
+#include "Camera/CameraManager.h"
 #include "Input/Input.h"
 #include "SceneManager/SceneManager.h"
 #include "Fade/Fade.h"

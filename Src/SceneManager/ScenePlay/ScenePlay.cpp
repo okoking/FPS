@@ -53,6 +53,8 @@ void ScenePlay::Step()
 
 	//時止め
 	if (!isTimeStop) {
+		// プレイヤー更新処理
+		cPlayer.Update();
 		//球通常処理
 		CShotManager.Step();
 		//敵通常処理

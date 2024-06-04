@@ -3,7 +3,7 @@
 #include "../Input/Input.h"
 #include "../Common.h"
 #include "../Draw3D/Draw3D.h"
-
+#include "../Collision/Collision.h"
 // 定義関連
 static const char PLAYER_MODEL_PATH[] =
 		{ "Data/Model/char/char.pmd" };	// ロードするファイル名
@@ -15,6 +15,7 @@ CPlayer::CPlayer() {
 	memset(&m_vPos, 0, sizeof(VECTOR));
 	memset(&m_vRot, 0, sizeof(VECTOR));
 	memset(&m_vSpeed, 0, sizeof(VECTOR));
+	memset(&m_vNextPos, 0, sizeof(VECTOR));
 	m_eState = PLAYER_STATE_WAIT;
 	m_iHndl = -1;
 }
@@ -28,6 +29,7 @@ CPlayer::~CPlayer(){
 void CPlayer::Init(){
 	CModel::Init();
 	m_vSpeed = VECTOR_ZERO;
+	m_vNextPos = m_vPos;
 	m_eState = PLAYER_STATE_WAIT;
 }
 
@@ -43,13 +45,22 @@ void CPlayer::Draw()
 	CModel::Draw();
 
 	VECTOR vPos = m_vPos;
-	vPos.y += 5.0f;
-	VECTOR size = { 20.0f,10.0f,30.0f };
+	vPos.y += 10.0f;
+	VECTOR size = { 8.0f,20.0f,8.0f };
 	Draw3D::Draw3DBox(vPos, size);
+
+	VECTOR vBoxPos = { 0.0f,0.0f,0.0f };
+	vBoxPos.y += 10.0f;
+	VECTOR Boxsize = { 8.0f,20.0f,8.0f };
+	Draw3D::Draw3DBox(vBoxPos, Boxsize);
+
+	if (Collision::IsHitRect3D(vPos, size, vBoxPos, Boxsize)) {
+		DrawFormatString(0, 0, RED, "あたってる");
+	}
 }
 
 // 毎フレーム実行する処理
-void CPlayer::Step(ShotManager &cShotManager){
+void CPlayer::Step(ShotManager& cShotManager) {
 	if (CModel::m_sAnimData.m_iID <= ANIMID_RUN) {
 		// プレイヤー移動処理
 		Moving();
@@ -57,9 +68,6 @@ void CPlayer::Step(ShotManager &cShotManager){
 
 	// 球発射処理
 	Shooting(cShotManager);
-
-	// 更新処理
-	Update();
 }
 
 // 更新したデータを反映させる
@@ -67,6 +75,7 @@ void CPlayer::Update() {
 	// アニメーション更新処理
 	(this->*m_pFunc[CModel::m_sAnimData.m_iID])();
 
+	UpdataPos();
 	CModel::Update();
 	CModel::UpdateAnim();
 }
@@ -113,8 +122,8 @@ void CPlayer::Moving()
 	m_vSpeed.z = cosf(m_vRot.y) * fSpd;
 
 	// 移動速度を現在の座標に加算する。
-	m_vPos.x += m_vSpeed.x;
-	m_vPos.z += m_vSpeed.z;
+	m_vNextPos.x += m_vSpeed.x;
+	m_vNextPos.z += m_vSpeed.z;
 }
 
 // 球発射処理
@@ -241,4 +250,34 @@ void CPlayer::ExecDance()
 		// ダンス中にXを押すと待機に
 		RequestLoop(ANIMID_WAIT, 0.5f);
 	}
+}
+
+// 移動している方向取得
+void CPlayer::GetMoveDirection(bool* _dirArray)
+{
+	// 右方向のチェック
+	if (m_vNextPos.x > m_vPos.x) {
+		_dirArray[3] = true;
+	}
+	// 左方向のチェック
+	if (m_vNextPos.x < m_vPos.x) {
+		_dirArray[2] = true;
+	}
+	// 下方向のチェック
+	if (m_vNextPos.y < m_vPos.y) {
+		_dirArray[1] = true;
+	}
+	// 上方向のチェック
+	if (m_vNextPos.y > m_vPos.y) {
+		_dirArray[0] = true;
+	}
+	// 奥のチェック
+	if (m_vNextPos.z > m_vPos.z) {
+		_dirArray[4] = true;
+	}
+	// 前のチェック
+	if (m_vNextPos.z < m_vPos.z) {
+		_dirArray[5] = true;
+	}
+
 }
