@@ -5,19 +5,125 @@
 #include "../Draw3D/Draw3D.h"
 #include "../Collision/Collision.h"
 // 定義関連
-static const char PLAYER_MODEL_PATH[] =
+const char PLAYER_MODEL_PATH[] =
 		{ "Data/Model/char/char.pmd" };	// ロードするファイル名
-static const float ROTATE_SPEED = 0.1f;		// プレイヤーの回転速度
-static const float MOVE_SPEED = 0.5f;		// プレイヤーの移動速度
-static const float DASH_SPEED = 1.5f;
+const float ROTATE_SPEED = 0.1f;		// プレイヤーの回転速度
+const float MOVE_SPEED = 0.5f;		// プレイヤーの移動速度
+const float DASH_SPEED = 1.5f;
+
+const VECTOR BOX_SIZE = { 8.0f,20.0f,8.0f };
+
+// 重力
+const float GRAVITY = 0.3f;
+const float JUMP_POWER = 4.0f;
+
+void CPlayer::BoxCollision()
+{
+	isHitBox = false;
+	if (Collision::IsHitRect3D(box[0].m_vPos, box[0].m_vSize, box[1].m_vPos, box[1].m_vSize)) {
+		isHitBox = true;
+	}
+
+	VECTOR m_CentervPos = m_vPos;
+	m_CentervPos.y += BOX_SIZE.y / 2.0f;
+
+	VECTOR m_CentervNextPos = m_vNextPos;
+	m_CentervNextPos.y += BOX_SIZE.y / 2.0f;
+
+	VECTOR AvSize = box[0].m_vSize;
+
+	// 動かない箱の座標やら
+	VECTOR BvPos = box[1].m_vPos;
+	VECTOR BvSize = box[1].m_vSize;
+
+	// 上下の当たり判定
+	if (Collision::IsHitRect3D(VGet(m_CentervPos.x, m_CentervNextPos.y, m_CentervPos.z), AvSize, BvPos, BvSize)){
+		bool dirArray[6]={false,false,false,false,false,false};
+		GetMoveDirection(dirArray);
+		if (dirArray[0]) {
+			// 上のめり込み量の計算
+			float calc = (m_CentervNextPos.y + AvSize.y / 2.0f) - (BvPos.y - BvSize.y / 2.0f);
+			m_vNextPos.y -= calc;
+
+			// 頭をぶつけたのでスピードを調整
+			m_vSpeed.y = -GRAVITY;
+			m_CameraForcusPos = m_vNextPos;
+		}
+		if (dirArray[1]) {
+			// 下のめり込み量の計算
+			float calc = (BvPos.y + BvSize.y / 2.0f) - (m_CentervNextPos.y - AvSize.y / 2.0f);
+			m_vNextPos.y += calc;
+			m_CameraForcusPos = m_vNextPos;
+			// 着地している判定に
+			m_vSpeed.y = 0.0f;
+			isLanding = true;
+		}
+	}
+	// 左右の当たり判定
+	if (Collision::IsHitRect3D(VGet(m_CentervNextPos.x, m_CentervPos.y, m_CentervPos.z), AvSize, BvPos, BvSize)) {
+		bool dirArray[6] = { false,false,false,false,false,false };
+		GetMoveDirection(dirArray);
+		if (dirArray[2]) {
+			// 左のめり込み量の計算
+			float calc = (BvPos.x + BvSize.x / 2.0f) - (m_CentervNextPos.x - AvSize.x / 2.0f);
+			m_vNextPos.x += calc;
+		}
+		if (dirArray[3]) {
+			// 右のめり込み量の計算
+			float calc = (m_CentervNextPos.x + AvSize.x / 2.0f) - (BvPos.x - BvSize.x / 2.0f);
+			m_vNextPos.x -= calc;
+		}
+	}
+	// 奥前の当たり判定
+	if (Collision::IsHitRect3D(VGet(m_CentervPos.x, m_CentervPos.y, m_CentervNextPos.z), AvSize, BvPos, BvSize)) {
+		bool dirArray[6] = { false,false,false,false,false,false };
+		GetMoveDirection(dirArray);
+		if (dirArray[4]) {
+			// 奥のめり込み量の計算
+			float calc = (m_CentervNextPos.z + AvSize.z / 2.0f) - (BvPos.z - BvSize.z / 2.0f);
+			m_vNextPos.z -= calc;
+		}
+		if (dirArray[5]) {
+			// 前のめり込み量の計算
+			float calc = (BvPos.z + BvSize.z / 2.0f) - (m_CentervNextPos.z - AvSize.z / 2.0f);
+			m_vNextPos.z += calc;
+		}
+	}
+
+	UpdataPos();
+}
+
+void CPlayer::BoxStep()
+{
+
+	box[0].m_vPos = m_vPos;
+	box[0].m_vPos.y += 10.0f;
+
+	box[1].m_vPos = { 10.0f,-5.0f,10.0f };
+}
+
+void CPlayer::DrawBox()
+{
+	Draw3D::Draw3DBox(box[0].m_vPos, box[0].m_vSize);
+	Draw3D::Draw3DBox(box[1].m_vPos, box[1].m_vSize);
+
+	if (isHitBox) {
+		DrawFormatString(0, 0, RED, "あたってる");
+	}
+
+}
+
 // コンストラクタ
 CPlayer::CPlayer() {
 	memset(&m_vPos, 0, sizeof(VECTOR));
 	memset(&m_vRot, 0, sizeof(VECTOR));
 	memset(&m_vSpeed, 0, sizeof(VECTOR));
 	memset(&m_vNextPos, 0, sizeof(VECTOR));
+	memset(&m_CameraForcusPos, 0, sizeof(VECTOR));
 	m_eState = PLAYER_STATE_WAIT;
 	m_iHndl = -1;
+	isHitBox = false;
+	isLanding = false;
 }
 
 // デストラクタ
@@ -30,7 +136,15 @@ void CPlayer::Init(){
 	CModel::Init();
 	m_vSpeed = VECTOR_ZERO;
 	m_vNextPos = m_vPos;
+	m_CameraForcusPos = m_vPos;
 	m_eState = PLAYER_STATE_WAIT;
+
+	for (int i = 0; i < 2; i++) {
+		memset(&box[i].m_vPos, 0, sizeof(VECTOR));
+		box[i].m_vSize = BOX_SIZE;
+	}
+	isHitBox = false;
+	isLanding = true;
 }
 
 // データ関連のロード
@@ -43,20 +157,7 @@ void CPlayer::Load(){
 void CPlayer::Draw()
 {
 	CModel::Draw();
-
-	VECTOR vPos = m_vPos;
-	vPos.y += 10.0f;
-	VECTOR size = { 8.0f,20.0f,8.0f };
-	Draw3D::Draw3DBox(vPos, size);
-
-	VECTOR vBoxPos = { 0.0f,0.0f,0.0f };
-	vBoxPos.y += 10.0f;
-	VECTOR Boxsize = { 8.0f,20.0f,8.0f };
-	Draw3D::Draw3DBox(vBoxPos, Boxsize);
-
-	if (Collision::IsHitRect3D(vPos, size, vBoxPos, Boxsize)) {
-		DrawFormatString(0, 0, RED, "あたってる");
-	}
+	DrawBox();
 }
 
 // 毎フレーム実行する処理
@@ -65,6 +166,9 @@ void CPlayer::Step(ShotManager& cShotManager) {
 		// プレイヤー移動処理
 		Moving();
 	}
+
+	BoxCollision();
+	BoxStep();
 
 	// 球発射処理
 	Shooting(cShotManager);
@@ -75,7 +179,6 @@ void CPlayer::Update() {
 	// アニメーション更新処理
 	(this->*m_pFunc[CModel::m_sAnimData.m_iID])();
 
-	UpdataPos();
 	CModel::Update();
 	CModel::UpdateAnim();
 }
@@ -117,6 +220,29 @@ void CPlayer::Moving()
 		}
 	}
 
+	// ジャンプ処理===================================
+	if (isLanding) {
+		if (Input::IsKeyPush(KEY_INPUT_SPACE)) {
+			m_vSpeed.y += JUMP_POWER;
+		}
+	}
+
+	m_vSpeed.y -= GRAVITY;
+
+	m_vNextPos.y += m_vSpeed.y;
+	m_CameraForcusPos.y += m_vSpeed.y / 2.0f;
+
+	isLanding = false;
+	// 地面との当たり判定
+	if (m_vNextPos.y < 0.0f) {
+		m_vNextPos.y = 0.0f;
+		m_vSpeed.y = 0.0f;
+		m_CameraForcusPos.y = m_vNextPos.y;
+		isLanding = true;
+	}
+	// ==================================================
+	
+	
 	// 入力したキー情報とプレイヤーの角度から、移動速度を求める
 	m_vSpeed.x = sinf(m_vRot.y) * fSpd;
 	m_vSpeed.z = cosf(m_vRot.y) * fSpd;
@@ -124,6 +250,9 @@ void CPlayer::Moving()
 	// 移動速度を現在の座標に加算する。
 	m_vNextPos.x += m_vSpeed.x;
 	m_vNextPos.z += m_vSpeed.z;
+
+	m_CameraForcusPos.x = m_vNextPos.x;
+	m_CameraForcusPos.z = m_vNextPos.z;
 }
 
 // 球発射処理
@@ -135,7 +264,7 @@ void CPlayer::Shooting(ShotManager& cShotManager)
 		VECTOR vPos = m_vPos;
 		vPos.y += 10.0f;
 		// 速度はプレイヤーと同じ方法で移動方向を決める
-		VECTOR vSpd;
+		VECTOR vSpd{};
 		const float SHOT_SPEED = 5.0f;
 		vSpd.x = sinf(m_vRot.y) * -SHOT_SPEED;
 		vSpd.z = cosf(m_vRot.y) * -SHOT_SPEED;
@@ -144,7 +273,7 @@ void CPlayer::Shooting(ShotManager& cShotManager)
 	}
 }
 
-//	何もしていないときの処理
+// 何もしていないときの処理
 void CPlayer::ExecDefault()
 {
 	// 以下待機中に実行できる処理

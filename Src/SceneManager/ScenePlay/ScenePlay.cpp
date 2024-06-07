@@ -70,7 +70,7 @@ void ScenePlay::Step()
 	else if (Input::IsKeyPush(KEY_INPUT_V))
 		cCameraManager.ChangeCamera(CCameraManager::CAMERA_ID_PLAY);
 	//カメラ更新処理
-	cCameraManager.Step(cPlayer.GetPosition(), cPlayer.GetRotateY());
+	cCameraManager.Step(cPlayer.GetCameraForcusPos(), cPlayer.GetRotateY());
 
 	//エンターキー入力でクリア画面へ
 	if (Input::IsKeyPush(KEY_INPUT_RETURN))

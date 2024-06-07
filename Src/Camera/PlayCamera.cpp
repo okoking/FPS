@@ -2,7 +2,7 @@
 #include "math.h"
 
 // カメラの距離
-#define CAMERA_LENGHT 30.0f
+#define CAMERA_LENGHT 50.0f
 
 // 視点の高さ
 #define CAMERA_OFFSET_Y 10.0f
@@ -51,7 +51,7 @@ void CPlayCamera::Step(VECTOR vForcusPos, float fRot) {
 
 	// 注視点はターゲットの位置を利用する
 	m_vForcusPos = vForcusPos;
-	m_vForcusPos.y = FORCUS_OFFSET_Y;
+	m_vForcusPos.y += FORCUS_OFFSET_Y;
 }
 
 // 更新したデータを反映

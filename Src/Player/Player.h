@@ -3,6 +3,10 @@
 #include "../Shot/ShotManager.h"
 #include "../Animation/Model.h"
 
+struct Box {
+	VECTOR m_vPos;
+	VECTOR m_vSize;
+};
 // アニメーション一覧
 enum tagAnim {
 	ANIMID_WAIT,		// 待機モーション
@@ -19,6 +23,12 @@ enum tagAnim {
 
 class CPlayer : public CModel
 {
+private:
+	Box box[2];
+	bool isHitBox;
+	void BoxCollision();
+	void BoxStep();
+	void DrawBox();
 public:
 	CPlayer();
 	~CPlayer();
@@ -43,6 +53,9 @@ public:
 	void Update();
 	// 座標更新(NextPos代入)
 	void UpdataPos() { m_vPos = m_vNextPos; }
+
+	// 注視点取得用
+	VECTOR GetCameraForcusPos(){ return m_CameraForcusPos; }
 private:
 	enum tagPlayerState {
 		PLAYER_STATE_WAIT,		// 待機中
@@ -54,9 +67,10 @@ private:
 	};
 
 	VECTOR m_vSpeed;
-	VECTOR m_vNextPos;	// 次のフレームの座標
-
+	VECTOR m_vNextPos;			// 次のフレームの座標
+	VECTOR m_CameraForcusPos;	// かめらの注視点
 	tagPlayerState m_eState;	// プレイヤーの状態
+	bool isLanding;				// 着地しているかどうか
 
 	// プレイヤー移動処理
 	void Moving();

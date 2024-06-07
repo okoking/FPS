@@ -27,14 +27,17 @@ bool Collision::IsHitCircle2D(int CircleX, int CirecleY, int CircleR, int Circle
 }
 
 //3D‹éŒ`‚Ì“–‚½‚è”»’è
-bool Collision::IsHitRect3D(VECTOR object1, VECTOR object1size, VECTOR object2, VECTOR object2size)
+bool Collision::IsHitRect3D(VECTOR ACenterPos, VECTOR ASize, VECTOR BCenterPos, VECTOR BSize)
 {
-	if (object2.x < object1.x + object1size.x &&
-		object2.x + object2size.x > object1.x &&
-		object2.y + object2size.y > object1.y &&
-		object2.y < object1.y + object1size.y &&
-		object2.z + object2size.z > object1.z &&
-		object2.z < object1.z + object1size.z) {
+	VECTOR AHalfSize = VScale(ASize, 0.5f);
+	VECTOR BHalfSize = VScale(BSize, 0.5f);
+
+	if (BCenterPos.x + BHalfSize.x > ACenterPos.x - AHalfSize.x &&
+		BCenterPos.x - BHalfSize.x < ACenterPos.x + AHalfSize.x && 
+		BCenterPos.y + BHalfSize.y > ACenterPos.y - AHalfSize.y &&
+		BCenterPos.y - BHalfSize.y < ACenterPos.y + AHalfSize.y &&
+		BCenterPos.z + BHalfSize.z > ACenterPos.z - AHalfSize.z &&
+		BCenterPos.z - BHalfSize.z < ACenterPos.z + AHalfSize.z) {
 
 		return true;
 	}
