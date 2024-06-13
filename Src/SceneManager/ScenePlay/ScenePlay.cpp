@@ -36,23 +36,18 @@ void ScenePlay::Init()
 }
 void ScenePlay::Step()
 {
-	//Tを押すと時を止めれる(もう一度押すと戻る)
-	if (Input::IsKeyPush(KEY_INPUT_T)) {
+	// デバッグ中Tを押すと時を止めれる(もう一度押すと戻る)
+	if (cCameraManager.GetCameraID() == CCameraManager::CAMERA_ID_DEBUG&&Input::IsKeyPush(KEY_INPUT_T)) {
 		if (isTimeStop)
 			isTimeStop = false;
 		else
 			isTimeStop = true;
 	}
 
-	if (cCameraManager.GetCameraID() == CCameraManager::CAMERA_ID_PLAY) {
-		//時止め
-		if (!isTimeStop) {}
-		//プレイヤー更新処理
-		cPlayer.Step(CShotManager);
-	}
-
 	//時止め
 	if (!isTimeStop) {
+		//プレイヤー更新処理
+		cPlayer.Step(CShotManager);
 		// プレイヤー更新処理
 		cPlayer.Update();
 		//球通常処理

@@ -4,18 +4,20 @@
 #include "../Common.h"
 #include "../Draw3D/Draw3D.h"
 #include "../Collision/Collision.h"
+#include "../Viewpoint/Viewpoint.h"
+
 // 定義関連
 const char PLAYER_MODEL_PATH[] =
 		{ "Data/Model/char/char.pmd" };	// ロードするファイル名
 const float ROTATE_SPEED = 0.1f;		// プレイヤーの回転速度
 const float MOVE_SPEED = 0.5f;		// プレイヤーの移動速度
 const float DASH_SPEED = 1.5f;
-
+const float FORCUS_SPEED = 3.0f;	// ジャンプ時の注視点の移動速度
 const VECTOR BOX_SIZE = { 8.0f,20.0f,8.0f };
 
 // 重力
-const float GRAVITY = 0.3f;
-const float JUMP_POWER = 4.0f;
+const float GRAVITY = 0.15f;
+const float JUMP_POWER = 2.5f;
 
 void CPlayer::BoxCollision()
 {
@@ -32,61 +34,63 @@ void CPlayer::BoxCollision()
 
 	VECTOR AvSize = box[0].m_vSize;
 
-	// 動かない箱の座標やら
-	VECTOR BvPos = box[1].m_vPos;
-	VECTOR BvSize = box[1].m_vSize;
-
 	// 上下の当たり判定
-	if (Collision::IsHitRect3D(VGet(m_CentervPos.x, m_CentervNextPos.y, m_CentervPos.z), AvSize, BvPos, BvSize)){
-		bool dirArray[6]={false,false,false,false,false,false};
-		GetMoveDirection(dirArray);
-		if (dirArray[0]) {
-			// 上のめり込み量の計算
-			float calc = (m_CentervNextPos.y + AvSize.y / 2.0f) - (BvPos.y - BvSize.y / 2.0f);
-			m_vNextPos.y -= calc;
+	for (int BoxIndex = 1; BoxIndex < 10; BoxIndex++) {
+		if (Collision::IsHitRect3D(VGet(m_CentervPos.x, m_CentervNextPos.y, m_CentervPos.z), AvSize, box[BoxIndex].m_vPos, box[BoxIndex].m_vSize)) {
+			bool dirArray[6] = { false,false,false,false,false,false };
+			GetMoveDirection(dirArray);
+			if (dirArray[0]) {
+				// 上のめり込み量の計算
+				float calc = (m_CentervNextPos.y + AvSize.y / 2.0f) - (box[BoxIndex].m_vPos.y - box[BoxIndex].m_vSize.y / 2.0f);
+				m_vNextPos.y -= calc;
 
-			// 頭をぶつけたのでスピードを調整
-			m_vSpeed.y = -GRAVITY;
-			m_CameraForcusPos = m_vNextPos;
-		}
-		if (dirArray[1]) {
-			// 下のめり込み量の計算
-			float calc = (BvPos.y + BvSize.y / 2.0f) - (m_CentervNextPos.y - AvSize.y / 2.0f);
-			m_vNextPos.y += calc;
-			m_CameraForcusPos = m_vNextPos;
-			// 着地している判定に
-			m_vSpeed.y = 0.0f;
-			isLanding = true;
-		}
-	}
-	// 左右の当たり判定
-	if (Collision::IsHitRect3D(VGet(m_CentervNextPos.x, m_CentervPos.y, m_CentervPos.z), AvSize, BvPos, BvSize)) {
-		bool dirArray[6] = { false,false,false,false,false,false };
-		GetMoveDirection(dirArray);
-		if (dirArray[2]) {
-			// 左のめり込み量の計算
-			float calc = (BvPos.x + BvSize.x / 2.0f) - (m_CentervNextPos.x - AvSize.x / 2.0f);
-			m_vNextPos.x += calc;
-		}
-		if (dirArray[3]) {
-			// 右のめり込み量の計算
-			float calc = (m_CentervNextPos.x + AvSize.x / 2.0f) - (BvPos.x - BvSize.x / 2.0f);
-			m_vNextPos.x -= calc;
+				// 頭をぶつけたのでスピードを調整
+				m_vSpeed.y = -GRAVITY;
+				m_CameraForcusPos = m_vNextPos;
+			}
+			if (dirArray[1]) {
+				// 下のめり込み量の計算
+				float calc = (box[BoxIndex].m_vPos.y + box[BoxIndex].m_vSize.y / 2.0f) - (m_CentervNextPos.y - AvSize.y / 2.0f);
+				m_vNextPos.y += calc;
+				m_CameraForcusPos = m_vNextPos;
+				// 着地している判定に
+				m_vSpeed.y = 0.0f;
+				isLanding = true;
+			}
 		}
 	}
-	// 奥前の当たり判定
-	if (Collision::IsHitRect3D(VGet(m_CentervPos.x, m_CentervPos.y, m_CentervNextPos.z), AvSize, BvPos, BvSize)) {
-		bool dirArray[6] = { false,false,false,false,false,false };
-		GetMoveDirection(dirArray);
-		if (dirArray[4]) {
-			// 奥のめり込み量の計算
-			float calc = (m_CentervNextPos.z + AvSize.z / 2.0f) - (BvPos.z - BvSize.z / 2.0f);
-			m_vNextPos.z -= calc;
+	for (int BoxIndex = 1; BoxIndex < 10; BoxIndex++) {
+		// 左右の当たり判定
+		if (Collision::IsHitRect3D(VGet(m_CentervNextPos.x, m_CentervPos.y, m_CentervPos.z), AvSize, box[BoxIndex].m_vPos, box[BoxIndex].m_vSize)) {
+			bool dirArray[6] = { false,false,false,false,false,false };
+			GetMoveDirection(dirArray);
+			if (dirArray[2]) {
+				// 左のめり込み量の計算
+				float calc = (box[BoxIndex].m_vPos.x + box[BoxIndex].m_vSize.x / 2.0f) - (m_CentervNextPos.x - AvSize.x / 2.0f);
+				m_vNextPos.x += calc;
+			}
+			if (dirArray[3]) {
+				// 右のめり込み量の計算
+				float calc = (m_CentervNextPos.x + AvSize.x / 2.0f) - (box[BoxIndex].m_vPos.x - box[BoxIndex].m_vSize.x / 2.0f);
+				m_vNextPos.x -= calc;
+			}
 		}
-		if (dirArray[5]) {
-			// 前のめり込み量の計算
-			float calc = (BvPos.z + BvSize.z / 2.0f) - (m_CentervNextPos.z - AvSize.z / 2.0f);
-			m_vNextPos.z += calc;
+	}
+	for (int BoxIndex = 1; BoxIndex < 10; BoxIndex++) {
+		// 奥前の当たり判定
+		if (Collision::IsHitRect3D(VGet(m_CentervPos.x, m_CentervPos.y, m_CentervNextPos.z), AvSize, box[BoxIndex].m_vPos, box[BoxIndex].m_vSize)) {
+			bool dirArray[6] = { false,false,false,false,false,false };
+			GetMoveDirection(dirArray);
+			if (dirArray[4]) {
+				// 奥のめり込み量の計算
+				float calc = (m_CentervNextPos.z + AvSize.z / 2.0f) - (box[BoxIndex].m_vPos.z - box[BoxIndex].m_vSize.z / 2.0f);
+				m_vNextPos.z -= calc;
+			}
+			if (dirArray[5]) {
+				// 前のめり込み量の計算
+				float calc = (box[BoxIndex].m_vPos.z + box[BoxIndex].m_vSize.z / 2.0f) - (m_CentervNextPos.z - AvSize.z / 2.0f);
+				m_vNextPos.z += calc;
+			}
 		}
 	}
 
@@ -98,15 +102,13 @@ void CPlayer::BoxStep()
 
 	box[0].m_vPos = m_vPos;
 	box[0].m_vPos.y += 10.0f;
-
-	box[1].m_vPos = { 10.0f,-5.0f,10.0f };
 }
 
 void CPlayer::DrawBox()
 {
-	Draw3D::Draw3DBox(box[0].m_vPos, box[0].m_vSize);
-	Draw3D::Draw3DBox(box[1].m_vPos, box[1].m_vSize);
-
+	for (int i = 0; i < 10; i++) {
+		Draw3D::Draw3DBox(box[i].m_vPos, box[i].m_vSize);
+	}
 	if (isHitBox) {
 		DrawFormatString(0, 0, RED, "あたってる");
 	}
@@ -139,8 +141,10 @@ void CPlayer::Init(){
 	m_CameraForcusPos = m_vPos;
 	m_eState = PLAYER_STATE_WAIT;
 
-	for (int i = 0; i < 2; i++) {
-		memset(&box[i].m_vPos, 0, sizeof(VECTOR));
+	box[0].m_vSize = BOX_SIZE;
+
+	for (int i = 1; i < 10; i++) {
+		box[i].m_vPos = { 10.0f + 8.0f * (float)(i-1),-5.0f + 4.0f * (float)(i - 1),10.0f };
 		box[i].m_vSize = BOX_SIZE;
 	}
 	isHitBox = false;
@@ -158,6 +162,7 @@ void CPlayer::Draw()
 {
 	CModel::Draw();
 	DrawBox();
+	DrawFormatString(0, 0, WHITE, "%f", CViewpoint::GetRot().x);
 }
 
 // 毎フレーム実行する処理
@@ -194,31 +199,62 @@ void CPlayer::Moving()
 		m_vRot.y -= ROTATE_SPEED;
 	}
 
-	// キャラクターの移動
+	//// キャラクターの移動
+	//float fSpd = 0.0f;
+	//m_eState = PLAYER_STATE_WAIT;
+	//if (Input::IsKeyDown(KEY_INPUT_UP)) {
+	//	// シフト押してるなら走る
+	//	if (Input::IsKeyDown(KEY_INPUT_LSHIFT)) {
+	//		fSpd = -DASH_SPEED;
+	//		m_eState = PLAYER_STATE_RUN;
+	//	}
+	//	else {
+	//		fSpd = -MOVE_SPEED;
+	//		m_eState = PLAYER_STATE_WALK;
+	//	}
+	//}
+	//else if (Input::IsKeyDown(KEY_INPUT_DOWN)) {
+	//	// シフト押してるなら走る
+	//	if (Input::IsKeyDown(KEY_INPUT_LSHIFT)) {
+	//		fSpd = DASH_SPEED;
+	//		m_eState = PLAYER_STATE_RUN;
+	//	}
+	//	else {
+	//		fSpd = MOVE_SPEED;
+	//		m_eState = PLAYER_STATE_WALK;
+	//	}
+	//}
+
 	float fSpd = 0.0f;
+	float MoveSpeed = MOVE_SPEED;
+
+	if (Input::IsKeyDown(KEY_INPUT_LSHIFT)) {
+		MoveSpeed = DASH_SPEED;
+	}
+
+	if (Input::IsKeyKeep(KEY_INPUT_W)) {
+		fSpd = -MoveSpeed;
+	}
+	else if (Input::IsKeyKeep(KEY_INPUT_S)) {
+		fSpd = MoveSpeed;
+	}
+	float fRot = 0.0f;
+	if (Input::IsKeyKeep(KEY_INPUT_A)) {
+		fSpd = MoveSpeed;
+		fRot = 90.0f * DX_PI_F / 180.0f;
+	}
+	else if (Input::IsKeyKeep(KEY_INPUT_D)) {
+		fSpd = -MoveSpeed;
+		fRot = 90.0f * DX_PI_F / 180.0f;
+	}
+
 	m_eState = PLAYER_STATE_WAIT;
-	if (Input::IsKeyDown(KEY_INPUT_UP)) {
-		// シフト押してるなら走る
-		if (Input::IsKeyDown(KEY_INPUT_LSHIFT)) {
-			fSpd = -DASH_SPEED;
-			m_eState = PLAYER_STATE_RUN;
-		}
-		else {
-			fSpd = -MOVE_SPEED;
-			m_eState = PLAYER_STATE_WALK;
-		}
-	}
-	else if (Input::IsKeyDown(KEY_INPUT_DOWN)) {
-		// シフト押してるなら走る
-		if (Input::IsKeyDown(KEY_INPUT_LSHIFT)) {
-			fSpd = DASH_SPEED;
-			m_eState = PLAYER_STATE_RUN;
-		}
-		else {
-			fSpd = MOVE_SPEED;
-			m_eState = PLAYER_STATE_WALK;
-		}
-	}
+
+	if (fSpd != 0.0f && !Input::IsKeyDown(KEY_INPUT_LSHIFT))
+		m_eState = PLAYER_STATE_WALK;
+	else if (fSpd != 0.0f && Input::IsKeyDown(KEY_INPUT_LSHIFT))
+		m_eState = PLAYER_STATE_RUN;
+
 
 	// ジャンプ処理===================================
 	if (isLanding) {
@@ -230,7 +266,7 @@ void CPlayer::Moving()
 	m_vSpeed.y -= GRAVITY;
 
 	m_vNextPos.y += m_vSpeed.y;
-	m_CameraForcusPos.y += m_vSpeed.y / 2.0f;
+	m_CameraForcusPos.y += m_vSpeed.y / FORCUS_SPEED;
 
 	isLanding = false;
 	// 地面との当たり判定
@@ -242,10 +278,9 @@ void CPlayer::Moving()
 	}
 	// ==================================================
 	
-	
 	// 入力したキー情報とプレイヤーの角度から、移動速度を求める
-	m_vSpeed.x = sinf(m_vRot.y) * fSpd;
-	m_vSpeed.z = cosf(m_vRot.y) * fSpd;
+	m_vSpeed.x = sinf(m_vRot.y + fRot) * fSpd;
+	m_vSpeed.z = cosf(m_vRot.y + fRot) * fSpd;
 
 	// 移動速度を現在の座標に加算する。
 	m_vNextPos.x += m_vSpeed.x;

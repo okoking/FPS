@@ -1,5 +1,5 @@
 #include "Fade.h"
-
+#include "../Common.h"
 CFade::tagFadeState CFade::m_eState = STATE_FADE_NONE;
 bool CFade::m_bIsEndFlag = false;
 int CFade::m_iAlpha = 0;
@@ -41,7 +41,7 @@ void CFade::Step(){
 // •`‰æ
 void CFade::Draw(){
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_iAlpha);
-	DrawBox(0, 0, 640, 480, GetColor(255, 0, 0), true);
+	DrawBox(0, 0, SCREEN_SIZE_X, SCREEN_SIZE_Y, RED, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
 

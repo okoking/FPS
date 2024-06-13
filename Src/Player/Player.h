@@ -24,7 +24,7 @@ enum tagAnim {
 class CPlayer : public CModel
 {
 private:
-	Box box[2];
+	Box box[10];
 	bool isHitBox;
 	void BoxCollision();
 	void BoxStep();

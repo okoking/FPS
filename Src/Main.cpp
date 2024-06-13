@@ -5,10 +5,8 @@
 #include "Input/Input.h"
 #include "SceneManager/SceneManager.h"
 #include "Fade/Fade.h"
-
-// define
-#define	SCREEN_SIZE_X	640	// X方向の画面サイズを指定
-#define	SCREEN_SIZE_Y	480	// Y方向の画面サイズを指定
+#include "Common.h"
+#include "Viewpoint/Viewpoint.h"
 
 // Win32アプリケーションは WinMain関数 から始まる
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
@@ -29,14 +27,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	// Zバッファに設定
 	SetUseZBuffer3D(TRUE);
+	
+	// マウスポインタの表示を消す
+	SetMouseDispFlag(FALSE);
 
 	//-----------------------------------------
 	//一番最初に１回だけやる処理をここに書く
 	// シーン
 	SceneManager scene;
 
-	// キー情報初期化
-	Input::InitInput();
+	// 初期化まとめ
+	InitGame();
 
 	// 透過処理初期化
 
@@ -57,10 +58,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		//-----------------------------------------
 		//ここからゲームの本体を書くことになる
 		//-----------------------------------------
-		// 入力情報処理
-		Input::StepInput();
-
-		CFade::Step();
+		// // staticのStepまとめ
+		StepGame();
 
 		// ゲームメイン処理
 		scene.Main();
@@ -82,4 +81,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	DxLib_End();
 
 	return 0;
+}
+
+// 初期化祭り
+void InitGame()
+{
+	Input::InitInput();
+	CViewpoint::Init();
+}
+
+// staticのStepまとめ
+void StepGame()
+{
+	Input::StepInput();
+	CFade::Step();
+	CViewpoint::Step();
 }
