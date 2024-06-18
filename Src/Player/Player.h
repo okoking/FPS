@@ -21,6 +21,18 @@ enum tagAnim {
 	ANIMID_NUM,			// 全アニメーション数
 };
 
+// プレイヤーの動く方向
+enum PlayerDirection {
+	DIR_TOP,			// 上
+	DIR_TOPRIGHT,		// 右上
+	DIR_RIGHT,			// 右
+	DIR_BOTTOMRIGHT,	// 右下
+	DIR_UNDER,			// 下
+	DIR_LOWERLEFT,		// 左下
+	DIR_LEFT,			// 左
+	DIR_TOPLEFT,		// 左上
+};
+
 class CPlayer : public CModel
 {
 private:
@@ -71,6 +83,7 @@ private:
 	VECTOR m_CameraForcusPos;	// かめらの注視点
 	tagPlayerState m_eState;	// プレイヤーの状態
 	bool isLanding;				// 着地しているかどうか
+	PlayerDirection m_Dir;		// プレイヤーの移動方向
 
 	// プレイヤー移動処理
 	void Moving();

@@ -24,6 +24,8 @@ void CModel::Init()
 	Exit();
 	memset(&m_vPos, 0, sizeof(VECTOR));
 	memset(&m_vRot, 0, sizeof(VECTOR));
+	//m_vRot.y = 180.0f;
+
 	m_vScale = VECTOR_ONE;
 	ZeroMemory(&m_sAnimData, sizeof(m_sAnimData));
 	m_sAnimData.m_iHndl = -1;

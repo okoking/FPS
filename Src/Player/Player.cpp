@@ -99,7 +99,6 @@ void CPlayer::BoxCollision()
 
 void CPlayer::BoxStep()
 {
-
 	box[0].m_vPos = m_vPos;
 	box[0].m_vPos.y += 10.0f;
 }
@@ -126,6 +125,7 @@ CPlayer::CPlayer() {
 	m_iHndl = -1;
 	isHitBox = false;
 	isLanding = false;
+	m_Dir = DIR_TOP;
 }
 
 // デストラクタ
@@ -138,8 +138,10 @@ void CPlayer::Init(){
 	CModel::Init();
 	m_vSpeed = VECTOR_ZERO;
 	m_vNextPos = m_vPos;
+	m_vRot.y = DX_PI_F;
 	m_CameraForcusPos = m_vPos;
 	m_eState = PLAYER_STATE_WAIT;
+	m_Dir = DIR_TOP;
 
 	box[0].m_vSize = BOX_SIZE;
 
@@ -162,7 +164,9 @@ void CPlayer::Draw()
 {
 	CModel::Draw();
 	DrawBox();
-	DrawFormatString(0, 0, WHITE, "%f", CViewpoint::GetRot().x);
+	
+	//DrawFormatString(0, 0, RED, "%f", CViewpoint::GetRot().y);
+	DrawFormatString(0, 0, RED, "%d", m_Dir);
 }
 
 // 毎フレーム実行する処理
@@ -190,62 +194,72 @@ void CPlayer::Update() {
 
 // プレイヤー移動処理
 void CPlayer::Moving()
-{
-	// キャラクターの回転
-	if (Input::IsKeyDown(KEY_INPUT_RIGHT)) {
-		m_vRot.y += ROTATE_SPEED;
-	}
-	else if (Input::IsKeyDown(KEY_INPUT_LEFT)) {
-		m_vRot.y -= ROTATE_SPEED;
-	}
-
-	//// キャラクターの移動
-	//float fSpd = 0.0f;
-	//m_eState = PLAYER_STATE_WAIT;
-	//if (Input::IsKeyDown(KEY_INPUT_UP)) {
-	//	// シフト押してるなら走る
-	//	if (Input::IsKeyDown(KEY_INPUT_LSHIFT)) {
-	//		fSpd = -DASH_SPEED;
-	//		m_eState = PLAYER_STATE_RUN;
-	//	}
-	//	else {
-	//		fSpd = -MOVE_SPEED;
-	//		m_eState = PLAYER_STATE_WALK;
-	//	}
-	//}
-	//else if (Input::IsKeyDown(KEY_INPUT_DOWN)) {
-	//	// シフト押してるなら走る
-	//	if (Input::IsKeyDown(KEY_INPUT_LSHIFT)) {
-	//		fSpd = DASH_SPEED;
-	//		m_eState = PLAYER_STATE_RUN;
-	//	}
-	//	else {
-	//		fSpd = MOVE_SPEED;
-	//		m_eState = PLAYER_STATE_WALK;
-	//	}
-	//}
-
+{	
+	float MoveSpeed = -MOVE_SPEED;
 	float fSpd = 0.0f;
-	float MoveSpeed = MOVE_SPEED;
+
+	VECTOR vRot = { 0.0f,0.0f,0.0f };
+
+	if (Input::IsKeyDown(KEY_INPUT_W)) {
+		if (Input::IsKeyDown(KEY_INPUT_A)) {
+			m_Dir = DIR_TOPLEFT;
+		}
+		else if (Input::IsKeyDown(KEY_INPUT_D)) {
+			m_Dir = DIR_TOPRIGHT;
+		}
+		else {
+			m_Dir = DIR_TOP;
+		}
+		m_vRot.y = CViewpoint::GetRot().y + ((float)m_Dir * 45.0f) * CALC_ANGLE;
+	}
+	else if (Input::IsKeyDown(KEY_INPUT_S)) {
+		if (Input::IsKeyDown(KEY_INPUT_A)) {
+			m_Dir = DIR_LOWERLEFT;
+		}
+		else if (Input::IsKeyDown(KEY_INPUT_D)) {
+			m_Dir = DIR_BOTTOMRIGHT;
+		}
+		else {
+			m_Dir = DIR_UNDER;
+		}
+		m_vRot.y = CViewpoint::GetRot().y + ((float)m_Dir * 45.0f) * CALC_ANGLE;
+	}
+
+	if (Input::IsKeyDown(KEY_INPUT_A)) {
+		m_vRot.y = ((float)m_Dir * 45.0f) * CALC_ANGLE;
+		if (Input::IsKeyDown(KEY_INPUT_W)) {
+			m_Dir = DIR_TOPLEFT;
+		}
+		else if (Input::IsKeyDown(KEY_INPUT_S)) {
+			m_Dir = DIR_LOWERLEFT;
+		}
+		else {
+			m_Dir = DIR_LEFT;
+		}
+		m_vRot.y = CViewpoint::GetRot().y + ((float)m_Dir * 45.0f) * CALC_ANGLE;
+	}
+	else if (Input::IsKeyDown(KEY_INPUT_D)) {
+		if (Input::IsKeyDown(KEY_INPUT_W)) {
+			m_Dir = DIR_TOPRIGHT;
+		}
+		else if (Input::IsKeyDown(KEY_INPUT_S)) {
+			m_Dir = DIR_BOTTOMRIGHT;
+		}
+		else {
+			m_Dir = DIR_RIGHT;
+		}
+		m_vRot.y = CViewpoint::GetRot().y + ((float)m_Dir * 45.0f) * CALC_ANGLE;
+	}
 
 	if (Input::IsKeyDown(KEY_INPUT_LSHIFT)) {
-		MoveSpeed = DASH_SPEED;
+		MoveSpeed = -DASH_SPEED;
 	}
 
-	if (Input::IsKeyKeep(KEY_INPUT_W)) {
-		fSpd = -MoveSpeed;
-	}
-	else if (Input::IsKeyKeep(KEY_INPUT_S)) {
+	if (Input::IsKeyDown(KEY_INPUT_W) ||
+		Input::IsKeyDown(KEY_INPUT_A) ||
+		Input::IsKeyDown(KEY_INPUT_S) ||
+		Input::IsKeyDown(KEY_INPUT_D) ) {
 		fSpd = MoveSpeed;
-	}
-	float fRot = 0.0f;
-	if (Input::IsKeyKeep(KEY_INPUT_A)) {
-		fSpd = MoveSpeed;
-		fRot = 90.0f * DX_PI_F / 180.0f;
-	}
-	else if (Input::IsKeyKeep(KEY_INPUT_D)) {
-		fSpd = -MoveSpeed;
-		fRot = 90.0f * DX_PI_F / 180.0f;
 	}
 
 	m_eState = PLAYER_STATE_WAIT;
@@ -279,8 +293,8 @@ void CPlayer::Moving()
 	// ==================================================
 	
 	// 入力したキー情報とプレイヤーの角度から、移動速度を求める
-	m_vSpeed.x = sinf(m_vRot.y + fRot) * fSpd;
-	m_vSpeed.z = cosf(m_vRot.y + fRot) * fSpd;
+	m_vSpeed.x = sinf(m_vRot.y) * fSpd;
+	m_vSpeed.z = cosf(m_vRot.y) * fSpd;
 
 	// 移動速度を現在の座標に加算する。
 	m_vNextPos.x += m_vSpeed.x;

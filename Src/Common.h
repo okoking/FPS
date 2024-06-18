@@ -19,7 +19,9 @@ const int	SCREEN_SIZE_Y = 480;	// Y方向の画面サイズを指定
 const int HALF_SCREEN_SIZE_X = SCREEN_SIZE_X / 2;
 const int HALF_SCREEN_SIZE_Y = SCREEN_SIZE_Y / 2;
 
+//#define CALC_ANGLE(a) a*DX_PI_F / 180.0f;
 const float CALC_ANGLE = DX_PI_F / 180.0f;
+
 void InitGame();
 void StepGame();
 

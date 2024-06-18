@@ -16,8 +16,10 @@ void CViewpoint::Init()
 {
 	m_MouseX = HALF_SCREEN_SIZE_X;
 	m_MouseY = HALF_SCREEN_SIZE_Y;
+	SetMousePoint(HALF_SCREEN_SIZE_X, HALF_SCREEN_SIZE_Y);
 
 	m_vRot = VECTOR_ZERO;
+	m_vRot.y = 180.0f * CALC_ANGLE;
 }
 
 //入力制御ステップ
