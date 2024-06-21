@@ -14,6 +14,8 @@ const float MOVE_SPEED = 0.5f;			// プレイヤーの移動速度
 const float DASH_SPEED = 1.5f;			// 走るスピード
 const float FORCUS_SPEED_MAG = 3.0f;	// ジャンプ時の注視点の移動速度倍率
 const float FORCUS_SPEED = -2.0f;		// ジャンプ時の注視点の最高移動速度
+const float FORCUS_DIS = 10.0f;			// ジャンプ時の注視点の最高移動速度
+
 const VECTOR BOX_SIZE = { 8.0f,20.0f,8.0f };
 
 // 重力
@@ -71,7 +73,10 @@ void CPlayer::BoxCollision()
 		}
 	}
 	else {
-		m_CameraForcusPos.y += m_vSpeed.y / FORCUS_SPEED_MAG;
+		if (m_CameraForcusPos.y - m_vNextPos.y < FORCUS_DIS)
+			m_CameraForcusPos.y += m_vSpeed.y;
+		else
+			m_CameraForcusPos.y += m_vSpeed.y / FORCUS_SPEED_MAG;
 	}
 
 	for (int BoxIndex = 1; BoxIndex < 10; BoxIndex++) {
