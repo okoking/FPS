@@ -29,7 +29,7 @@ public:
 	void Init(VECTOR vPos, VECTOR vForcusPos, VECTOR vUp);
 
 	// –ˆƒtƒŒ[ƒ€Às‚·‚éˆ—
-	void Step(VECTOR vForcusPos, float fRot);
+	void Step(VECTOR vForcusPos);
 
 	// •`‰æ
 	void Draw();

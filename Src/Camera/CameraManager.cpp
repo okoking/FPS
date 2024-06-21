@@ -34,12 +34,12 @@ void CCameraManager::Init(VECTOR vPos, VECTOR vForcusPos, VECTOR vUp) {
 }
 
 // 毎フレーム実行する処理
-void CCameraManager::Step(VECTOR vForcusPos, float fRot) {
+void CCameraManager::Step(VECTOR vForcusPos) {
 	// カメラのタイプに合わせて、更新処理を変更する
 	switch (m_eCurrentCameraId)
 	{
 	case CCameraManager::CAMERA_ID_PLAY:
-		m_cPlayCam.Step(vForcusPos, fRot);
+		m_cPlayCam.Step(vForcusPos);
 		m_cPlayCam.Upadate();
 		break;
 	case CCameraManager::CAMERA_ID_DEBUG:

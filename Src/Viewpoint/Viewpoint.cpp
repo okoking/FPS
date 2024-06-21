@@ -7,7 +7,7 @@ int m_MouseX, m_MouseY;
 // ‰ñ“]’l
 VECTOR m_vRot;
 
-const float MouseSens = 0.5;
+const float MouseSens = 0.3f;
 
 const float XRotRange = -DX_PI_F / 2.2f;
 

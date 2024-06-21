@@ -87,7 +87,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 void InitGame()
 {
 	Input::InitInput();
-	CViewpoint::Init();
 }
 
 // static‚ÌStep‚Ü‚Æ‚ß
@@ -95,5 +94,4 @@ void StepGame()
 {
 	Input::StepInput();
 	CFade::Step();
-	CViewpoint::Step();
 }

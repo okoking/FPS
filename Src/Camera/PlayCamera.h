@@ -17,7 +17,7 @@ public:
 	void Init(VECTOR vPos, VECTOR vForcusPos, VECTOR vUp);
 
 	// 毎フレーム実行する処理
-	void Step(VECTOR vForcusPos, float fRot);
+	void Step(VECTOR vForcusPos);
 
 	// 更新したデータを反映
 	void Upadate();

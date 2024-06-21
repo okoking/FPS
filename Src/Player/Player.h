@@ -37,7 +37,6 @@ class CPlayer : public CModel
 {
 private:
 	Box box[10];
-	bool isHitBox;
 	void BoxCollision();
 	void BoxStep();
 	void DrawBox();
@@ -107,10 +106,6 @@ private:
 	void ExecPiano();
 	// ダンス中
 	void ExecDance();
-
-	// 関数ポインタ
-	void(CPlayer:: * m_pFunc[ANIMID_NUM])() = { &CPlayer::ExecDefault,&CPlayer::ExecWalk,&CPlayer::ExecRun,&CPlayer::ExecWait,
-		&CPlayer::ExecUpDown,&CPlayer::ExecShake,&CPlayer::ExecPiano,&CPlayer::ExecDance };
 
 	// 移動している方向取得(上下左右奥前)
 	void GetMoveDirection(bool* _dirArray);

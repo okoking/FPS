@@ -10,9 +10,10 @@
 const char PLAYER_MODEL_PATH[] =
 		{ "Data/Model/char/char.pmd" };	// ロードするファイル名
 const float ROTATE_SPEED = 0.1f;		// プレイヤーの回転速度
-const float MOVE_SPEED = 0.5f;		// プレイヤーの移動速度
-const float DASH_SPEED = 1.5f;
-const float FORCUS_SPEED = 3.0f;	// ジャンプ時の注視点の移動速度
+const float MOVE_SPEED = 0.5f;			// プレイヤーの移動速度
+const float DASH_SPEED = 1.5f;			// 走るスピード
+const float FORCUS_SPEED_MAG = 3.0f;	// ジャンプ時の注視点の移動速度倍率
+const float FORCUS_SPEED = -2.0f;		// ジャンプ時の注視点の最高移動速度
 const VECTOR BOX_SIZE = { 8.0f,20.0f,8.0f };
 
 // 重力
@@ -21,11 +22,6 @@ const float JUMP_POWER = 2.5f;
 
 void CPlayer::BoxCollision()
 {
-	isHitBox = false;
-	if (Collision::IsHitRect3D(box[0].m_vPos, box[0].m_vSize, box[1].m_vPos, box[1].m_vSize)) {
-		isHitBox = true;
-	}
-
 	VECTOR m_CentervPos = m_vPos;
 	m_CentervPos.y += BOX_SIZE.y / 2.0f;
 
@@ -45,20 +41,39 @@ void CPlayer::BoxCollision()
 				m_vNextPos.y -= calc;
 
 				// 頭をぶつけたのでスピードを調整
-				m_vSpeed.y = -GRAVITY;
-				m_CameraForcusPos = m_vNextPos;
+				m_vSpeed.y = 0.0f;
 			}
 			if (dirArray[1]) {
 				// 下のめり込み量の計算
 				float calc = (box[BoxIndex].m_vPos.y + box[BoxIndex].m_vSize.y / 2.0f) - (m_CentervNextPos.y - AvSize.y / 2.0f);
 				m_vNextPos.y += calc;
-				m_CameraForcusPos = m_vNextPos;
 				// 着地している判定に
-				m_vSpeed.y = 0.0f;
 				isLanding = true;
+			}
+			m_CentervNextPos = m_vNextPos;
+			m_CentervNextPos.y += BOX_SIZE.y / 2.0f;
+		}
+	}
+
+	if (isLanding) {
+		m_vSpeed.y = 0.0f;
+		if (m_CameraForcusPos.y > m_vNextPos.y) {
+			m_CameraForcusPos.y += FORCUS_SPEED;
+			if (m_CameraForcusPos.y < m_vNextPos.y) {
+				m_CameraForcusPos.y = m_vNextPos.y;
+			}
+		}
+		else if (m_CameraForcusPos.y < m_vNextPos.y) {
+			m_CameraForcusPos.y -= FORCUS_SPEED;
+			if (m_CameraForcusPos.y > m_vNextPos.y) {
+				m_CameraForcusPos.y = m_vNextPos.y;
 			}
 		}
 	}
+	else {
+		m_CameraForcusPos.y += m_vSpeed.y / FORCUS_SPEED_MAG;
+	}
+
 	for (int BoxIndex = 1; BoxIndex < 10; BoxIndex++) {
 		// 左右の当たり判定
 		if (Collision::IsHitRect3D(VGet(m_CentervNextPos.x, m_CentervPos.y, m_CentervPos.z), AvSize, box[BoxIndex].m_vPos, box[BoxIndex].m_vSize)) {
@@ -75,7 +90,10 @@ void CPlayer::BoxCollision()
 				m_vNextPos.x -= calc;
 			}
 		}
+		m_CentervNextPos = m_vNextPos;
+		m_CentervNextPos.y += BOX_SIZE.y / 2.0f;
 	}
+
 	for (int BoxIndex = 1; BoxIndex < 10; BoxIndex++) {
 		// 奥前の当たり判定
 		if (Collision::IsHitRect3D(VGet(m_CentervPos.x, m_CentervPos.y, m_CentervNextPos.z), AvSize, box[BoxIndex].m_vPos, box[BoxIndex].m_vSize)) {
@@ -92,6 +110,8 @@ void CPlayer::BoxCollision()
 				m_vNextPos.z += calc;
 			}
 		}
+		m_CentervNextPos = m_vNextPos;
+		m_CentervNextPos.y += BOX_SIZE.y / 2.0f;
 	}
 
 	UpdataPos();
@@ -108,10 +128,6 @@ void CPlayer::DrawBox()
 	for (int i = 0; i < 10; i++) {
 		Draw3D::Draw3DBox(box[i].m_vPos, box[i].m_vSize);
 	}
-	if (isHitBox) {
-		DrawFormatString(0, 0, RED, "あたってる");
-	}
-
 }
 
 // コンストラクタ
@@ -123,7 +139,6 @@ CPlayer::CPlayer() {
 	memset(&m_CameraForcusPos, 0, sizeof(VECTOR));
 	m_eState = PLAYER_STATE_WAIT;
 	m_iHndl = -1;
-	isHitBox = false;
 	isLanding = false;
 	m_Dir = DIR_TOP;
 }
@@ -149,7 +164,6 @@ void CPlayer::Init(){
 		box[i].m_vPos = { 10.0f + 8.0f * (float)(i-1),-5.0f + 4.0f * (float)(i - 1),10.0f };
 		box[i].m_vSize = BOX_SIZE;
 	}
-	isHitBox = false;
 	isLanding = true;
 }
 
@@ -164,9 +178,6 @@ void CPlayer::Draw()
 {
 	CModel::Draw();
 	DrawBox();
-	
-	//DrawFormatString(0, 0, RED, "%f", CViewpoint::GetRot().y);
-	DrawFormatString(0, 0, RED, "%d", m_Dir);
 }
 
 // 毎フレーム実行する処理
@@ -186,7 +197,13 @@ void CPlayer::Step(ShotManager& cShotManager) {
 // 更新したデータを反映させる
 void CPlayer::Update() {
 	// アニメーション更新処理
-	(this->*m_pFunc[CModel::m_sAnimData.m_iID])();
+	// 関数ポインタ
+	void(CPlayer:: * pAnim[])() = {
+		&CPlayer::ExecDefault,&CPlayer::ExecWalk,&CPlayer::ExecRun,&CPlayer::ExecWait,
+		&CPlayer::ExecUpDown,&CPlayer::ExecShake,&CPlayer::ExecPiano,&CPlayer::ExecDance
+	};
+
+	(this->*pAnim[CModel::m_sAnimData.m_iID])();
 
 	CModel::Update();
 	CModel::UpdateAnim();
@@ -276,20 +293,38 @@ void CPlayer::Moving()
 			m_vSpeed.y += JUMP_POWER;
 		}
 	}
-
 	m_vSpeed.y -= GRAVITY;
 
 	m_vNextPos.y += m_vSpeed.y;
-	m_CameraForcusPos.y += m_vSpeed.y / FORCUS_SPEED;
 
 	isLanding = false;
+
 	// 地面との当たり判定
 	if (m_vNextPos.y < 0.0f) {
 		m_vNextPos.y = 0.0f;
-		m_vSpeed.y = 0.0f;
-		m_CameraForcusPos.y = m_vNextPos.y;
 		isLanding = true;
 	}
+
+	//if (isLanding) {
+	//	m_vSpeed.y = 0.0f;
+	//	if (m_CameraForcusPos.y > m_vNextPos.y) {
+	//		m_CameraForcusPos.y += FORCUS_SPEED;
+	//		if (m_CameraForcusPos.y < m_vNextPos.y) {
+	//			m_CameraForcusPos.y = m_vNextPos.y;
+	//		}
+	//	}
+	//	else if (m_CameraForcusPos.y < m_vNextPos.y) {
+	//		m_CameraForcusPos.y -= FORCUS_SPEED;
+	//		if (m_CameraForcusPos.y > m_vNextPos.y) {
+	//			m_CameraForcusPos.y = m_vNextPos.y;
+	//		}
+	//	}
+	//}
+	//else {
+	//	m_CameraForcusPos.y += m_vSpeed.y / FORCUS_SPEED_MAG;
+	//}
+
+
 	// ==================================================
 	
 	// 入力したキー情報とプレイヤーの角度から、移動速度を求める
@@ -336,11 +371,11 @@ void CPlayer::ExecDefault()
 		// 走っている状態なら走りモーションに
 		RequestLoop(ANIMID_RUN, 0.5f);
 	}
-	else if (Input::IsKeyPush(KEY_INPUT_Q)) {
-		// Qキーを押すとぶらぶらする
+	else if (Input::IsKeyPush(KEY_INPUT_1)) {
+		// 1キーを押すとぶらぶらする
 		RequestLoop(ANIMID_DANGLING, 0.5f);
 	}
-	else if (Input::IsKeyPush(KEY_INPUT_X)) {
+	else if (Input::IsKeyPush(KEY_INPUT_2)) {
 		// 上下にくねくね
 		RequestLoop(ANIMID_UPDOWN, 0.5f);
 	}
@@ -357,11 +392,11 @@ void CPlayer::ExecWalk()
 		// 走っている状態なら走りモーションに
 		RequestLoop(ANIMID_RUN, 0.5f);
 	}
-	else if (Input::IsKeyPush(KEY_INPUT_Q)) {
-		// Zキーを押すとぶらぶらする
+	else if (Input::IsKeyPush(KEY_INPUT_1)) {
+		// 1キーを押すとぶらぶらする
 		RequestLoop(ANIMID_DANGLING, 0.5f);
 	}
-	else if (Input::IsKeyPush(KEY_INPUT_X)) {
+	else if (Input::IsKeyPush(KEY_INPUT_2)) {
 		// 上下にくねくね
 		RequestLoop(ANIMID_UPDOWN, 0.5f);
 	}
@@ -378,11 +413,11 @@ void CPlayer::ExecRun()
 		// 歩いている状態なら歩きモーションに
 		RequestLoop(ANIMID_WALK, 0.5f);
 	}
-	else if (Input::IsKeyPush(KEY_INPUT_Q)) {
-		// Zキーを押すとぶらぶらする
+	else if (Input::IsKeyPush(KEY_INPUT_1)) {
+		// 1キーを押すとぶらぶらする
 		RequestLoop(ANIMID_DANGLING, 0.5f);
 	}
-	else if (Input::IsKeyPush(KEY_INPUT_X)) {
+	else if (Input::IsKeyPush(KEY_INPUT_2)) {
 		// 上下にくねくね
 		RequestLoop(ANIMID_UPDOWN, 0.5f);
 	}
@@ -390,8 +425,8 @@ void CPlayer::ExecRun()
 
 void CPlayer::ExecWait()
 {
-	if (Input::IsKeyPush(KEY_INPUT_Q)) {
-		// Zキーを押すと手を振る
+	if (Input::IsKeyPush(KEY_INPUT_1)) {
+		// 1キーを押すと手を振る
 		RequestLoop(ANIMID_SHAKE, 0.5f);
 	}
 }
@@ -399,7 +434,7 @@ void CPlayer::ExecWait()
 void CPlayer::ExecUpDown()
 {
 	if (CModel::m_sAnimData.m_fFrm + 10.0f * CModel::m_sAnimData.m_fSpd >= CModel::m_sAnimData.m_fEndFrm) {
-		if (Input::IsKeyPush(KEY_INPUT_X)) {
+		if (Input::IsKeyPush(KEY_INPUT_2)) {
 			// ダンス
 			RequestLoop(ANIMID_DANCE, 0.5f);
 		}
@@ -408,24 +443,24 @@ void CPlayer::ExecUpDown()
 
 void CPlayer::ExecShake()
 {
-	if (Input::IsKeyPush(KEY_INPUT_Q)) {
-		// Zキーを押すとピアノ
+	if (Input::IsKeyPush(KEY_INPUT_1)) {
+		// 1キーを押すとピアノ
 		RequestLoop(ANIMID_PIANO, 0.5f);
 	}
 }
 
 void CPlayer::ExecPiano()
 {
-	if (Input::IsKeyPush(KEY_INPUT_Q)) {
-		// ピアノ中にZキーを押すと待機モーションにに
+	if (Input::IsKeyPush(KEY_INPUT_1)) {
+		// ピアノ中に1キーを押すと待機モーションにに
 		RequestLoop(ANIMID_WAIT, 0.5f);
 	}
 }
 
 void CPlayer::ExecDance()
 {
-	if (Input::IsKeyPush(KEY_INPUT_X)) {
-		// ダンス中にXを押すと待機に
+	if (Input::IsKeyPush(KEY_INPUT_2)) {
+		// ダンス中に2を押すと待機に
 		RequestLoop(ANIMID_WAIT, 0.5f);
 	}
 }

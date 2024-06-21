@@ -3,9 +3,12 @@
 #include "../../Common.h"
 #include "../../Input/Input.h"
 #include "../../Fade/Fade.h"
+#include "../../Viewpoint/Viewpoint.h"
 
 void ScenePlay::Init()
 {
+	// 視点移動初期化
+	CViewpoint::Init();
 	//背景初期化
 	cBackGround.Init();
 	//空初期化
@@ -36,6 +39,9 @@ void ScenePlay::Init()
 }
 void ScenePlay::Step()
 {
+	// 視点移動
+	CViewpoint::Step();
+
 	// デバッグ中Tを押すと時を止めれる(もう一度押すと戻る)
 	if (cCameraManager.GetCameraID() == CCameraManager::CAMERA_ID_DEBUG&&Input::IsKeyPush(KEY_INPUT_T)) {
 		if (isTimeStop)
@@ -46,10 +52,13 @@ void ScenePlay::Step()
 
 	//時止め
 	if (!isTimeStop) {
-		//プレイヤー更新処理
-		cPlayer.Step(CShotManager);
-		// プレイヤー更新処理
-		cPlayer.Update();
+		if (cCameraManager.GetCameraID() == CCameraManager::CAMERA_ID_PLAY) {
+			//プレイヤー更新処理
+			cPlayer.Step(CShotManager);
+			// プレイヤー更新処理
+			cPlayer.Update();
+		}
+
 		//球通常処理
 		CShotManager.Step();
 		//敵通常処理
@@ -65,7 +74,7 @@ void ScenePlay::Step()
 	else if (Input::IsKeyPush(KEY_INPUT_V))
 		cCameraManager.ChangeCamera(CCameraManager::CAMERA_ID_PLAY);
 	//カメラ更新処理
-	cCameraManager.Step(cPlayer.GetCameraForcusPos(), cPlayer.GetRotateY());
+	cCameraManager.Step(cPlayer.GetCameraForcusPos());
 
 	//エンターキー入力でクリア画面へ
 	if (Input::IsKeyPush(KEY_INPUT_RETURN))
