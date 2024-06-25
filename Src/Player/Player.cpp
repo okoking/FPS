@@ -14,7 +14,7 @@ const float MOVE_SPEED = 0.5f;			// プレイヤーの移動速度
 const float DASH_SPEED = 1.5f;			// 走るスピード
 const float FORCUS_SPEED_MAG = 3.0f;	// ジャンプ時の注視点の移動速度倍率
 const float FORCUS_SPEED = -2.0f;		// ジャンプ時の注視点の最高移動速度
-const float FORCUS_DIS = 10.0f;			// ジャンプ時の注視点の最高移動速度
+const float FORCUS_DISSPEED = -2.5f;	// ジャンプ時の注視点の下限移動速度
 
 const VECTOR BOX_SIZE = { 8.0f,20.0f,8.0f };
 
@@ -57,31 +57,9 @@ void CPlayer::BoxCollision()
 		}
 	}
 
-	if (isLanding) {
-		m_vSpeed.y = 0.0f;
-		if (m_CameraForcusPos.y > m_vNextPos.y) {
-			m_CameraForcusPos.y += FORCUS_SPEED;
-			if (m_CameraForcusPos.y < m_vNextPos.y) {
-				m_CameraForcusPos.y = m_vNextPos.y;
-			}
-		}
-		else if (m_CameraForcusPos.y < m_vNextPos.y) {
-			m_CameraForcusPos.y -= FORCUS_SPEED;
-			if (m_CameraForcusPos.y > m_vNextPos.y) {
-				m_CameraForcusPos.y = m_vNextPos.y;
-			}
-		}
-	}
-	else {
-		if (m_CameraForcusPos.y - m_vNextPos.y < FORCUS_DIS)
-			m_CameraForcusPos.y += m_vSpeed.y;
-		else
-			m_CameraForcusPos.y += m_vSpeed.y / FORCUS_SPEED_MAG;
-	}
-
 	for (int BoxIndex = 1; BoxIndex < 10; BoxIndex++) {
 		// 左右の当たり判定
-		if (Collision::IsHitRect3D(VGet(m_CentervNextPos.x, m_CentervPos.y, m_CentervPos.z), AvSize, box[BoxIndex].m_vPos, box[BoxIndex].m_vSize)) {
+		if (Collision::IsHitRect3D(VGet(m_CentervNextPos.x, m_CentervNextPos.y, m_CentervPos.z), AvSize, box[BoxIndex].m_vPos, box[BoxIndex].m_vSize)) {
 			bool dirArray[6] = { false,false,false,false,false,false };
 			GetMoveDirection(dirArray);
 			if (dirArray[2]) {
@@ -101,7 +79,7 @@ void CPlayer::BoxCollision()
 
 	for (int BoxIndex = 1; BoxIndex < 10; BoxIndex++) {
 		// 奥前の当たり判定
-		if (Collision::IsHitRect3D(VGet(m_CentervPos.x, m_CentervPos.y, m_CentervNextPos.z), AvSize, box[BoxIndex].m_vPos, box[BoxIndex].m_vSize)) {
+		if (Collision::IsHitRect3D(VGet(m_CentervPos.x, m_CentervNextPos.y, m_CentervNextPos.z), AvSize, box[BoxIndex].m_vPos, box[BoxIndex].m_vSize)) {
 			bool dirArray[6] = { false,false,false,false,false,false };
 			GetMoveDirection(dirArray);
 			if (dirArray[4]) {
@@ -117,6 +95,29 @@ void CPlayer::BoxCollision()
 		}
 		m_CentervNextPos = m_vNextPos;
 		m_CentervNextPos.y += BOX_SIZE.y / 2.0f;
+	}
+
+	// 視点移動のあれこれ
+	if (isLanding) {
+		m_vSpeed.y = 0.0f;
+		if (m_CameraForcusPos.y > m_vNextPos.y) {
+			m_CameraForcusPos.y += FORCUS_SPEED;
+			if (m_CameraForcusPos.y < m_vNextPos.y) {
+				m_CameraForcusPos.y = m_vNextPos.y;
+			}
+		}
+		else if (m_CameraForcusPos.y < m_vNextPos.y) {
+			m_CameraForcusPos.y -= FORCUS_SPEED;
+			if (m_CameraForcusPos.y > m_vNextPos.y) {
+				m_CameraForcusPos.y = m_vNextPos.y;
+			}
+		}
+	}
+	else {
+		if (m_vSpeed.y < FORCUS_DISSPEED)
+			m_CameraForcusPos.y = m_vNextPos.y;
+		else
+			m_CameraForcusPos.y += m_vSpeed.y / FORCUS_SPEED_MAG;
 	}
 
 	UpdataPos();
@@ -166,7 +167,7 @@ void CPlayer::Init(){
 	box[0].m_vSize = BOX_SIZE;
 
 	for (int i = 1; i < 10; i++) {
-		box[i].m_vPos = { 10.0f + 8.0f * (float)(i-1),-5.0f + 4.0f * (float)(i - 1),10.0f };
+		box[i].m_vPos = { 10.0f + 8.0f * (float)(i-1),-5.0f + 8.0f * (float)(i - 1),10.0f };
 		box[i].m_vSize = BOX_SIZE;
 	}
 	isLanding = true;
@@ -309,26 +310,6 @@ void CPlayer::Moving()
 		m_vNextPos.y = 0.0f;
 		isLanding = true;
 	}
-
-	//if (isLanding) {
-	//	m_vSpeed.y = 0.0f;
-	//	if (m_CameraForcusPos.y > m_vNextPos.y) {
-	//		m_CameraForcusPos.y += FORCUS_SPEED;
-	//		if (m_CameraForcusPos.y < m_vNextPos.y) {
-	//			m_CameraForcusPos.y = m_vNextPos.y;
-	//		}
-	//	}
-	//	else if (m_CameraForcusPos.y < m_vNextPos.y) {
-	//		m_CameraForcusPos.y -= FORCUS_SPEED;
-	//		if (m_CameraForcusPos.y > m_vNextPos.y) {
-	//			m_CameraForcusPos.y = m_vNextPos.y;
-	//		}
-	//	}
-	//}
-	//else {
-	//	m_CameraForcusPos.y += m_vSpeed.y / FORCUS_SPEED_MAG;
-	//}
-
 
 	// ==================================================
 	
