@@ -22,6 +22,8 @@ void ScenePlay::Init()
 	CShotManager.Init();
 	//敵初期化
 	CEnemyManger.Init();
+	// マップ初期化
+	cMap.Init();
 	//時止めフラグ初期化
 	isTimeStop = false;
 	//背景ロード
@@ -67,6 +69,8 @@ void ScenePlay::Step()
 
 	//当たり判定
 	CollisionManager::CheckHitShotToEnemy(CEnemyManger, CShotManager);
+	// プレイヤーと箱の当たり判定
+	CollisionManager::CheckHitPlayerToBox(cPlayer, cMap);
 
 	//カメラ切り替え処理
 	if (Input::IsKeyPush(KEY_INPUT_C))
@@ -89,6 +93,7 @@ void ScenePlay::Draw()
 	CShotManager.Draw();
 	CEnemyManger.Draw();
 	cCameraManager.Draw();
+	cMap.Draw();
 }
 void ScenePlay::Fin()
 {

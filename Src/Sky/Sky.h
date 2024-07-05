@@ -1,4 +1,5 @@
 #pragma once
+#include "../Common.h"
 #include "../Object/Object3D.h"
 
 class CSky	:	public CObject3D

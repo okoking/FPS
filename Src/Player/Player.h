@@ -1,9 +1,9 @@
 #pragma once
-#include <DxLib.h>
+#include "../Common.h"
 #include "../Shot/ShotManager.h"
 #include "../Animation/Model.h"
 
-struct Box {
+struct StBox {
 	VECTOR m_vPos;
 	VECTOR m_vSize;
 };
@@ -36,10 +36,9 @@ enum PlayerDirection {
 class CPlayer : public CModel
 {
 private:
-	Box box[10];
+	StBox box[10];
+
 	void BoxCollision();
-	void BoxStep();
-	void DrawBox();
 public:
 	CPlayer();
 	~CPlayer();
@@ -56,8 +55,30 @@ public:
 	// 毎フレーム実行する処理
 	void Step(ShotManager& cShotManager);
 
-	// 座標取得
-	inline VECTOR GetPosition() { return m_vPos; }
+	// カメラの移動
+	void CameraForcuMovement();
+
+	// NextPos取得用
+	VECTOR GetNextPos() { return m_vNextPos; }
+	// NextPos代入
+	void SetNextPos(VECTOR vNextPos) { m_vNextPos = vNextPos; }
+	void SetNextPosX(float vNextPosX) { m_vNextPos.x = vNextPosX; }
+	void SetNextPosY(float vNextPosY) { m_vNextPos.y = vNextPosY; }
+	void SetNextPosZ(float vNextPosZ) { m_vNextPos.z = vNextPosZ; }
+
+	// 速度取得用
+	VECTOR GetSpeedPos() { return m_vSpeed; }
+	// 速度代入
+	void SetSpeed(VECTOR vSpeed) { m_vSpeed = vSpeed; }
+	void SetSpeedX(float vSpeedX) { m_vSpeed.x = vSpeedX; }
+	void SetSpeedY(float vSpeedY) { m_vSpeed.y = vSpeedY; }
+	void SetSpeedZ(float vSpeedZ) { m_vSpeed.z = vSpeedZ; }
+
+	// 着地フラグ取得用
+	bool GetisLanding() { return isLanding; }
+	// 着地フラグ代入用
+	void SetisLanding(bool Flag) { isLanding = Flag; }
+
 	// Y軸角度取得
 	inline float GetRotateY() { return m_vRot.y; }
 	// 更新したデータを反映させる
@@ -67,6 +88,9 @@ public:
 
 	// 注視点取得用
 	VECTOR GetCameraForcusPos(){ return m_CameraForcusPos; }
+
+	// 移動している方向取得(上下左右奥前)
+	void GetMoveDirection(bool* _dirArray);
 private:
 	enum tagPlayerState {
 		PLAYER_STATE_WAIT,		// 待機中
@@ -106,7 +130,4 @@ private:
 	void ExecPiano();
 	// ダンス中
 	void ExecDance();
-
-	// 移動している方向取得(上下左右奥前)
-	void GetMoveDirection(bool* _dirArray);
 };

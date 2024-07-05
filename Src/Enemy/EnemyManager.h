@@ -1,5 +1,7 @@
 #pragma once
 #include "Enemy.h"
+#include "../Common.h"
+
 const int ENEMY_NUM = 50;
 
 class CEnemyManager
@@ -7,7 +9,8 @@ class CEnemyManager
 private:
 	// 敵	敵のタイプが増えるとここのクラスも増えていく
 	// 本当はメモリの動的確保が望ましい
-	CEnemy m_cEnemy[ENEMY_NUM];
+	vector<CEnemy>m_cEnemy;
+
 	int m_iWaitCnt;	//　敵が生成されるまでの時間
 
 public:
@@ -28,6 +31,8 @@ public:
 
 	// 敵情報取得
 	inline CEnemy& GetEnemy(int iID) { return m_cEnemy[iID]; }
+	inline std::vector<CEnemy>& GetEnemyVec() { return m_cEnemy; }
+
 private:
 	// 敵確保
 	void RequestEnemy();

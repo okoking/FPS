@@ -9,7 +9,9 @@ VECTOR m_vRot;
 
 const float MouseSens = 0.3f;
 
-const float XRotRange = -DX_PI_F / 2.2f;
+const float XRotRange = -DX_PI_F / 2.1f;
+
+const VECTOR INIT_VIEW_ROT = { DX_PI_F / 4.0f,DX_PI_F ,0.0f };
 
 //入力制御初期化
 void CViewpoint::Init()
@@ -18,8 +20,7 @@ void CViewpoint::Init()
 	m_MouseY = HALF_SCREEN_SIZE_Y;
 	SetMousePoint(HALF_SCREEN_SIZE_X, HALF_SCREEN_SIZE_Y);
 
-	m_vRot = VECTOR_ZERO;
-	m_vRot.y = 180.0f * CALC_ANGLE;
+	m_vRot = INIT_VIEW_ROT;
 }
 
 //入力制御ステップ
@@ -30,13 +31,13 @@ void CViewpoint::Step()
 
 	GetMousePoint(&m_MouseX, &m_MouseY);
 
-	m_vRot.y += ((float)(m_MouseX - HALF_SCREEN_SIZE_X) * MouseSens) * CALC_ANGLE;
-	m_vRot.x += ((float)(m_MouseY - HALF_SCREEN_SIZE_Y) * MouseSens) * CALC_ANGLE;
-	if (m_vRot.x < XRotRange) {
-		m_vRot.x = XRotRange;
-	}
-	else if (m_vRot.x > 0.0f) {
+	m_vRot.y += (static_cast<float>(m_MouseX - HALF_SCREEN_SIZE_X) * MouseSens) * CALC_ANGLE;
+	m_vRot.x += (static_cast<float>(m_MouseY - HALF_SCREEN_SIZE_Y) * MouseSens) * CALC_ANGLE;
+	if (m_vRot.x < 0.0f) {
 		m_vRot.x = 0.0f;
+	}
+	else if (m_vRot.x > DX_PI_F / 2.0f) {
+		m_vRot.x = DX_PI_F / 2.0f;
 	}
 
 	SetMousePoint(HALF_SCREEN_SIZE_X, HALF_SCREEN_SIZE_Y);

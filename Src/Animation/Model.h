@@ -1,5 +1,5 @@
 #pragma once
-#include "DxLib.h"
+#include "../Common.h"
 
 class CModel {
 protected:
@@ -21,6 +21,7 @@ protected:
 	};
 
 	VECTOR		m_vPos;			// 座標
+	VECTOR		m_vSize;		// サイズ
 	VECTOR		m_vRot;			// 回転角度
 	VECTOR		m_vScale;		// 拡大縮小率
 	ANIM_DATA	m_sAnimData;	// アニメ再生関連データ
@@ -38,6 +39,15 @@ public:
 	virtual void Update();
 	// モデル描画
 	virtual void Draw();
+
+	// 座標取得用
+	VECTOR GetPos() { return m_vPos; }
+	// 座標代入用
+	void SetPos(VECTOR vPos) { m_vPos = vPos; }
+	// サイズ取得用
+	VECTOR GetSize() { return m_vSize; }
+	// サイズ代入用
+	void SetSize(VECTOR vSize) { m_vSize = vSize; }
 
 	//*********************************************
 	// 画像読み込み関連

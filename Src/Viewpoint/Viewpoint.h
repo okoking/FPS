@@ -1,5 +1,5 @@
 #pragma once
-#include "Dxlib.h"
+#include "../Common.h"
 
 class CViewpoint
 {

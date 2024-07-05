@@ -6,9 +6,6 @@
 // カメラの距離
 const float CAMERA_LENGHT = 50.0f;
 
-// 視点の高さ
-const float CAMERA_OFFSET_Y = 20.0f;
-
 // 注視点の高さ
 const float FORCUS_OFFSET_Y = 10.0f;
 
@@ -43,7 +40,7 @@ void CPlayCamera::Step(VECTOR vForcusPos) {
 	// プレイヤーの回転角度に合わせて方向ベクトルを回転させる
 	VECTOR vDir;
 	vDir.x = sinf(CViewpoint::GetRot().y) * CAMERA_LENGHT;
-	vDir.y = cosf(CViewpoint::GetRot().x) * CAMERA_LENGHT;
+	vDir.y = sinf(CViewpoint::GetRot().x) * CAMERA_LENGHT;
 	vDir.z = cosf(CViewpoint::GetRot().y) * CAMERA_LENGHT;
 
 	// 注視点の位置から計算結果の距離を加算すればカメラの視点になる

@@ -17,6 +17,7 @@ const float FORCUS_SPEED = -2.0f;		// ジャンプ時の注視点の最高移動速度
 const float FORCUS_DISSPEED = -2.5f;	// ジャンプ時の注視点の下限移動速度
 
 const VECTOR BOX_SIZE = { 8.0f,20.0f,8.0f };
+const VECTOR PLAYER_SIZE = { 8.0f,20.0f,8.0f };
 
 // 重力
 const float GRAVITY = 0.15f;
@@ -24,79 +25,151 @@ const float JUMP_POWER = 2.5f;
 
 void CPlayer::BoxCollision()
 {
-	VECTOR m_CentervPos = m_vPos;
-	m_CentervPos.y += BOX_SIZE.y / 2.0f;
+	//VECTOR m_CentervPos = m_vPos;
+	//m_CentervPos.y += BOX_SIZE.y / 2.0f;
 
-	VECTOR m_CentervNextPos = m_vNextPos;
-	m_CentervNextPos.y += BOX_SIZE.y / 2.0f;
+	//VECTOR m_CentervNextPos = m_vNextPos;
+	//m_CentervNextPos.y += BOX_SIZE.y / 2.0f;
 
-	VECTOR AvSize = box[0].m_vSize;
+	//VECTOR AvSize = m_vSize;
 
-	// 上下の当たり判定
-	for (int BoxIndex = 1; BoxIndex < 10; BoxIndex++) {
-		if (Collision::IsHitRect3D(VGet(m_CentervPos.x, m_CentervNextPos.y, m_CentervPos.z), AvSize, box[BoxIndex].m_vPos, box[BoxIndex].m_vSize)) {
-			bool dirArray[6] = { false,false,false,false,false,false };
-			GetMoveDirection(dirArray);
-			if (dirArray[0]) {
-				// 上のめり込み量の計算
-				float calc = (m_CentervNextPos.y + AvSize.y / 2.0f) - (box[BoxIndex].m_vPos.y - box[BoxIndex].m_vSize.y / 2.0f);
-				m_vNextPos.y -= calc;
+	//// 上下の当たり判定
+	//for (int BoxIndex = 0; BoxIndex < 10; BoxIndex++) {
+	//	if (Collision::IsHitRect3D(VGet(m_CentervPos.x, m_CentervNextPos.y, m_CentervPos.z), AvSize, box[BoxIndex].m_vPos, box[BoxIndex].m_vSize)) {
+	//		bool dirArray[6] = { false,false,false,false,false,false };
+	//		GetMoveDirection(dirArray);
+	//		if (dirArray[0]) {
+	//			// 上のめり込み量の計算
+	//			float calc = (m_CentervNextPos.y + AvSize.y / 2.0f) - (box[BoxIndex].m_vPos.y - box[BoxIndex].m_vSize.y / 2.0f);
+	//			m_vNextPos.y -= calc;
 
-				// 頭をぶつけたのでスピードを調整
-				m_vSpeed.y = 0.0f;
-			}
-			if (dirArray[1]) {
-				// 下のめり込み量の計算
-				float calc = (box[BoxIndex].m_vPos.y + box[BoxIndex].m_vSize.y / 2.0f) - (m_CentervNextPos.y - AvSize.y / 2.0f);
-				m_vNextPos.y += calc;
-				// 着地している判定に
-				isLanding = true;
-			}
-			m_CentervNextPos = m_vNextPos;
-			m_CentervNextPos.y += BOX_SIZE.y / 2.0f;
-		}
+	//			// 頭をぶつけたのでスピードを調整
+	//			m_vSpeed.y = 0.0f;
+	//		}
+	//		if (dirArray[1]) {
+	//			// 下のめり込み量の計算
+	//			float calc = (box[BoxIndex].m_vPos.y + box[BoxIndex].m_vSize.y / 2.0f) - (m_CentervNextPos.y - AvSize.y / 2.0f);
+	//			m_vNextPos.y += calc;
+	//			// 着地している判定に
+	//			isLanding = true;
+	//		}
+	//		m_CentervNextPos = m_vNextPos;
+	//		m_CentervNextPos.y += BOX_SIZE.y / 2.0f;
+	//	}
+	//}
+
+	//for (int BoxIndex = 0; BoxIndex < 10; BoxIndex++) {
+	//	// 左右の当たり判定
+	//	if (Collision::IsHitRect3D(VGet(m_CentervNextPos.x, m_CentervNextPos.y, m_CentervPos.z), AvSize, box[BoxIndex].m_vPos, box[BoxIndex].m_vSize)) {
+	//		bool dirArray[6] = { false,false,false,false,false,false };
+	//		GetMoveDirection(dirArray);
+	//		if (dirArray[2]) {
+	//			// 左のめり込み量の計算
+	//			float calc = (box[BoxIndex].m_vPos.x + box[BoxIndex].m_vSize.x / 2.0f) - (m_CentervNextPos.x - AvSize.x / 2.0f);
+	//			m_vNextPos.x += calc;
+	//		}
+	//		if (dirArray[3]) {
+	//			// 右のめり込み量の計算
+	//			float calc = (m_CentervNextPos.x + AvSize.x / 2.0f) - (box[BoxIndex].m_vPos.x - box[BoxIndex].m_vSize.x / 2.0f);
+	//			m_vNextPos.x -= calc;
+	//		}
+	//	}
+	//	m_CentervNextPos = m_vNextPos;
+	//	m_CentervNextPos.y += BOX_SIZE.y / 2.0f;
+	//}
+
+	//for (int BoxIndex = 0; BoxIndex < 10; BoxIndex++) {
+	//	// 奥前の当たり判定
+	//	if (Collision::IsHitRect3D(VGet(m_CentervNextPos.x, m_CentervNextPos.y, m_CentervNextPos.z), AvSize, box[BoxIndex].m_vPos, box[BoxIndex].m_vSize)) {
+	//		bool dirArray[6] = { false,false,false,false,false,false };
+	//		GetMoveDirection(dirArray);
+	//		if (dirArray[4]) {
+	//			// 奥のめり込み量の計算
+	//			float calc = (m_CentervNextPos.z + AvSize.z / 2.0f) - (box[BoxIndex].m_vPos.z - box[BoxIndex].m_vSize.z / 2.0f);
+	//			m_vNextPos.z -= calc;
+	//		}
+	//		if (dirArray[5]) {
+	//			// 前のめり込み量の計算
+	//			float calc = (box[BoxIndex].m_vPos.z + box[BoxIndex].m_vSize.z / 2.0f) - (m_CentervNextPos.z - AvSize.z / 2.0f);
+	//			m_vNextPos.z += calc;
+	//		}
+	//	}
+	//	m_CentervNextPos = m_vNextPos;
+	//	m_CentervNextPos.y += BOX_SIZE.y / 2.0f;
+	//}
+
+	// カメラの移動
+	CameraForcuMovement();
+
+	// 座標更新
+	UpdataPos();
+}
+
+// コンストラクタ
+CPlayer::CPlayer() {
+	memset(&m_vPos, 0, sizeof(VECTOR));
+	memset(&m_vRot, 0, sizeof(VECTOR));
+	memset(&m_vSpeed, 0, sizeof(VECTOR));
+	memset(&m_vNextPos, 0, sizeof(VECTOR));
+	memset(&m_CameraForcusPos, 0, sizeof(VECTOR));
+	m_eState = PLAYER_STATE_WAIT;
+	m_iHndl = -1;
+	isLanding = false;
+	m_Dir = DIR_TOP;
+
+	memset(&CPlayer::box->m_vPos, 0, sizeof(VECTOR));
+	memset(&CPlayer::box->m_vSize, 0, sizeof(VECTOR));
+}
+
+// デストラクタ
+CPlayer::~CPlayer(){
+	Exit();
+}
+
+// 初期化
+void CPlayer::Init(){
+	CModel::Init();
+	m_vSpeed = VECTOR_ZERO;
+	m_vNextPos = m_vPos;
+	m_vSize = PLAYER_SIZE;
+	m_vRot.y = DX_PI_F;
+	m_CameraForcusPos = m_vPos;
+	m_eState = PLAYER_STATE_WAIT;
+	m_Dir = DIR_TOP;
+
+	isLanding = true;
+}
+
+// データ関連のロード
+void CPlayer::Load(){
+	CModel::LoadModel(PLAYER_MODEL_PATH);
+	RequestLoop(ANIMID_WAIT, 0.5f);
+}
+
+// 描画
+void CPlayer::Draw()
+{
+	VECTOR Pos = m_vPos;
+	Pos.y += m_vSize.y / 2.0f;
+
+	Draw3D::Draw3DBox(Pos, m_vSize, true);
+	CModel::Draw();
+}
+
+// 毎フレーム実行する処理
+void CPlayer::Step(ShotManager& cShotManager) {
+	if (CModel::m_sAnimData.m_iID <= ANIMID_RUN) {
+		// プレイヤー移動処理
+		Moving();
 	}
 
-	for (int BoxIndex = 1; BoxIndex < 10; BoxIndex++) {
-		// 左右の当たり判定
-		if (Collision::IsHitRect3D(VGet(m_CentervNextPos.x, m_CentervNextPos.y, m_CentervPos.z), AvSize, box[BoxIndex].m_vPos, box[BoxIndex].m_vSize)) {
-			bool dirArray[6] = { false,false,false,false,false,false };
-			GetMoveDirection(dirArray);
-			if (dirArray[2]) {
-				// 左のめり込み量の計算
-				float calc = (box[BoxIndex].m_vPos.x + box[BoxIndex].m_vSize.x / 2.0f) - (m_CentervNextPos.x - AvSize.x / 2.0f);
-				m_vNextPos.x += calc;
-			}
-			if (dirArray[3]) {
-				// 右のめり込み量の計算
-				float calc = (m_CentervNextPos.x + AvSize.x / 2.0f) - (box[BoxIndex].m_vPos.x - box[BoxIndex].m_vSize.x / 2.0f);
-				m_vNextPos.x -= calc;
-			}
-		}
-		m_CentervNextPos = m_vNextPos;
-		m_CentervNextPos.y += BOX_SIZE.y / 2.0f;
-	}
+	// 球発射処理
+	Shooting(cShotManager);
+}
 
-	for (int BoxIndex = 1; BoxIndex < 10; BoxIndex++) {
-		// 奥前の当たり判定
-		if (Collision::IsHitRect3D(VGet(m_CentervPos.x, m_CentervNextPos.y, m_CentervNextPos.z), AvSize, box[BoxIndex].m_vPos, box[BoxIndex].m_vSize)) {
-			bool dirArray[6] = { false,false,false,false,false,false };
-			GetMoveDirection(dirArray);
-			if (dirArray[4]) {
-				// 奥のめり込み量の計算
-				float calc = (m_CentervNextPos.z + AvSize.z / 2.0f) - (box[BoxIndex].m_vPos.z - box[BoxIndex].m_vSize.z / 2.0f);
-				m_vNextPos.z -= calc;
-			}
-			if (dirArray[5]) {
-				// 前のめり込み量の計算
-				float calc = (box[BoxIndex].m_vPos.z + box[BoxIndex].m_vSize.z / 2.0f) - (m_CentervNextPos.z - AvSize.z / 2.0f);
-				m_vNextPos.z += calc;
-			}
-		}
-		m_CentervNextPos = m_vNextPos;
-		m_CentervNextPos.y += BOX_SIZE.y / 2.0f;
-	}
-
+// カメラの移動
+void CPlayer::CameraForcuMovement()
+{
 	// 視点移動のあれこれ
 	if (isLanding) {
 		m_vSpeed.y = 0.0f;
@@ -119,85 +192,6 @@ void CPlayer::BoxCollision()
 		else
 			m_CameraForcusPos.y += m_vSpeed.y / FORCUS_SPEED_MAG;
 	}
-
-	UpdataPos();
-}
-
-void CPlayer::BoxStep()
-{
-	box[0].m_vPos = m_vPos;
-	box[0].m_vPos.y += 10.0f;
-}
-
-void CPlayer::DrawBox()
-{
-	for (int i = 0; i < 10; i++) {
-		Draw3D::Draw3DBox(box[i].m_vPos, box[i].m_vSize);
-	}
-}
-
-// コンストラクタ
-CPlayer::CPlayer() {
-	memset(&m_vPos, 0, sizeof(VECTOR));
-	memset(&m_vRot, 0, sizeof(VECTOR));
-	memset(&m_vSpeed, 0, sizeof(VECTOR));
-	memset(&m_vNextPos, 0, sizeof(VECTOR));
-	memset(&m_CameraForcusPos, 0, sizeof(VECTOR));
-	m_eState = PLAYER_STATE_WAIT;
-	m_iHndl = -1;
-	isLanding = false;
-	m_Dir = DIR_TOP;
-}
-
-// デストラクタ
-CPlayer::~CPlayer(){
-	Exit();
-}
-
-// 初期化
-void CPlayer::Init(){
-	CModel::Init();
-	m_vSpeed = VECTOR_ZERO;
-	m_vNextPos = m_vPos;
-	m_vRot.y = DX_PI_F;
-	m_CameraForcusPos = m_vPos;
-	m_eState = PLAYER_STATE_WAIT;
-	m_Dir = DIR_TOP;
-
-	box[0].m_vSize = BOX_SIZE;
-
-	for (int i = 1; i < 10; i++) {
-		box[i].m_vPos = { 10.0f + 8.0f * (float)(i-1),-5.0f + 8.0f * (float)(i - 1),10.0f };
-		box[i].m_vSize = BOX_SIZE;
-	}
-	isLanding = true;
-}
-
-// データ関連のロード
-void CPlayer::Load(){
-	CModel::LoadModel(PLAYER_MODEL_PATH);
-	RequestLoop(ANIMID_WAIT, 0.5f);
-}
-
-// 描画
-void CPlayer::Draw()
-{
-	CModel::Draw();
-	DrawBox();
-}
-
-// 毎フレーム実行する処理
-void CPlayer::Step(ShotManager& cShotManager) {
-	if (CModel::m_sAnimData.m_iID <= ANIMID_RUN) {
-		// プレイヤー移動処理
-		Moving();
-	}
-
-	BoxCollision();
-	BoxStep();
-
-	// 球発射処理
-	Shooting(cShotManager);
 }
 
 // 更新したデータを反映させる
@@ -233,7 +227,7 @@ void CPlayer::Moving()
 		else {
 			m_Dir = DIR_TOP;
 		}
-		m_vRot.y = CViewpoint::GetRot().y + ((float)m_Dir * 45.0f) * CALC_ANGLE;
+		m_vRot.y = CViewpoint::GetRot().y + (static_cast<float>(m_Dir) * 45.0f) * CALC_ANGLE;
 	}
 	else if (Input::IsKeyDown(KEY_INPUT_S)) {
 		if (Input::IsKeyDown(KEY_INPUT_A)) {
@@ -245,11 +239,11 @@ void CPlayer::Moving()
 		else {
 			m_Dir = DIR_UNDER;
 		}
-		m_vRot.y = CViewpoint::GetRot().y + ((float)m_Dir * 45.0f) * CALC_ANGLE;
+		m_vRot.y = CViewpoint::GetRot().y + (static_cast<float>(m_Dir) * 45.0f) * CALC_ANGLE;
 	}
 
 	if (Input::IsKeyDown(KEY_INPUT_A)) {
-		m_vRot.y = ((float)m_Dir * 45.0f) * CALC_ANGLE;
+		m_vRot.y = (static_cast<float>(m_Dir) * 45.0f) * CALC_ANGLE;
 		if (Input::IsKeyDown(KEY_INPUT_W)) {
 			m_Dir = DIR_TOPLEFT;
 		}
@@ -259,7 +253,7 @@ void CPlayer::Moving()
 		else {
 			m_Dir = DIR_LEFT;
 		}
-		m_vRot.y = CViewpoint::GetRot().y + ((float)m_Dir * 45.0f) * CALC_ANGLE;
+		m_vRot.y = CViewpoint::GetRot().y + (static_cast<float>(m_Dir) * 45.0f) * CALC_ANGLE;
 	}
 	else if (Input::IsKeyDown(KEY_INPUT_D)) {
 		if (Input::IsKeyDown(KEY_INPUT_W)) {
@@ -271,7 +265,7 @@ void CPlayer::Moving()
 		else {
 			m_Dir = DIR_RIGHT;
 		}
-		m_vRot.y = CViewpoint::GetRot().y + ((float)m_Dir * 45.0f) * CALC_ANGLE;
+		m_vRot.y = CViewpoint::GetRot().y + (static_cast<float>(m_Dir) * 45.0f) * CALC_ANGLE;
 	}
 
 	if (Input::IsKeyDown(KEY_INPUT_LSHIFT)) {
@@ -478,5 +472,4 @@ void CPlayer::GetMoveDirection(bool* _dirArray)
 	if (m_vNextPos.z < m_vPos.z) {
 		_dirArray[5] = true;
 	}
-
 }

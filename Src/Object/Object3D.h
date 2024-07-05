@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Dxlib.h"
+#include "../Common.h"
 
 //===========================================
 //		オブジェクト操作クラス

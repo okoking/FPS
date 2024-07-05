@@ -9,6 +9,9 @@ static const int WAIT_TIME = 60;	// 敵が再登場するまでの時間
 CEnemyManager::CEnemyManager()
 {
 	m_iWaitCnt = 0;
+
+	// 敵の数分データを用意
+	m_cEnemy.resize(ENEMY_NUM);
 }
 
 // デストラクタ
@@ -21,9 +24,9 @@ CEnemyManager::~CEnemyManager()
 void CEnemyManager::Init()
 {
 	m_iWaitCnt = WAIT_TIME;
-	for (int i = 0; i < ENEMY_NUM; i++) {
+	for (int i = 0; i < m_cEnemy.size(); i++) {
 		m_cEnemy[i].Init();
-	}	
+	}
 }
 
 // データロード
@@ -32,7 +35,7 @@ void CEnemyManager::Load()
 	// オリジナルモデル読み込み
 	int iHndl = MV1LoadModel(ENEMY_MODEL_PATH);
 	// モデル複製
-	for (int i = 0; i < ENEMY_NUM; i++) {
+	for (int i = 0; i < m_cEnemy.size(); i++) {
 		m_cEnemy[i].Load(iHndl);
 	}
 }
@@ -40,7 +43,7 @@ void CEnemyManager::Load()
 // 終了処理
 void CEnemyManager::Exit()
 {
-	for (int i = 0; i < ENEMY_NUM; i++) {
+	for (int i = 0; i < m_cEnemy.size(); i++) {
 		m_cEnemy[i].Exit();
 	}
 }
@@ -50,7 +53,7 @@ void CEnemyManager::Step()
 {
 	int iEnemyCnt = 0;	//　敵の出現数
 	// 敵の移動処理
-	for (int i = 0; i < ENEMY_NUM; i++) {
+	for (int i = 0; i < m_cEnemy.size(); i++) {
 		m_cEnemy[i].Step();
 		if (m_cEnemy[i].IsActive())
 			iEnemyCnt++;
@@ -68,7 +71,7 @@ void CEnemyManager::Step()
 // 描画処理
 void CEnemyManager::Draw()
 {
-	for (int i = 0; i < ENEMY_NUM; i++) {
+	for (int i = 0; i < m_cEnemy.size(); i++) {
 		m_cEnemy[i].Draw();
 	}
 }
@@ -76,10 +79,10 @@ void CEnemyManager::Draw()
 // 敵確保
 void CEnemyManager::RequestEnemy()
 {
-	VECTOR vPos = VGet((float)GetRand(200) - 100.0f, 0.0f, 200.0f);
+	VECTOR vPos = VGet(static_cast<float>(GetRand(200)) - 100.0f, 0.0f, 200.0f);
 	VECTOR vSpeed = VGet(0.0f, 0.0f, -0.5f);
 
-	for (int i = 0; i < ENEMY_NUM; i++) {
+	for (int i = 0; i < m_cEnemy.size(); i++) {
 		if (m_cEnemy[i].RequestEnemy(vPos, vSpeed)) {
 			break;
 		}

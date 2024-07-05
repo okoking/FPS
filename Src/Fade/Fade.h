@@ -1,5 +1,5 @@
 #pragma once
-#include "DxLib.h"
+#include "../Common.h"
 
 class CFade {
 public:

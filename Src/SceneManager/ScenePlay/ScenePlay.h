@@ -6,6 +6,7 @@
 #include "../../BackGround/BackGround.h"
 #include "../../Collision/CollisionManager.h"
 #include "../../Sky/Sky.h"
+#include "../../Map/Map.h"
 
 class ScenePlay :public SceneBace
 {
@@ -16,6 +17,7 @@ private:
 	CEnemyManager		CEnemyManger;	// エネミーマネージャー
 	CBackGround			cBackGround;	// 背景
 	CSky				cSky;			// 空
+	CMap				cMap;			// マップ
 
 	bool				isTimeStop;		// 時止めフラグ
 

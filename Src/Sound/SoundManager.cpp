@@ -57,13 +57,13 @@ bool CSoundManager::LoadAllData()
 // Ä¶ŠÔæ“¾(ƒ~ƒŠ•b)
 int CSoundManager::GetSoundTime(tagSoundID iID)
 {
-	return (int)GetSoundCurrentTime(m_iHndl[iID]);
+	return static_cast<int>(GetSoundCurrentTime(m_iHndl[iID]));
 }
 
 // Ä´‘|ŠÔæ“¾(ƒ~ƒŠ•b)
 int CSoundManager::GetSoundAllTime(tagSoundID iID)
 {
-	return (int)GetSoundTotalTime(m_iHndl[iID]);
+	return static_cast<int>(GetSoundTotalTime(m_iHndl[iID]));
 }
 
 // ‰¹ŠyÄ¶”»’è
