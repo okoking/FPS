@@ -1,7 +1,8 @@
 #pragma once
 #include "../Common.h"
 
-const int RADIUS = 5;
+constexpr float RADIUS = 5.0f;
+constexpr VECTOR ENEMY_SIZE = { 5.0f,5.0f,5.0f };
 
 class CEnemy {
 private:
@@ -25,9 +26,12 @@ public:
 	//生存判定を返す
 	bool IsActive() { return isActive; }
 	//座標を取得
-	void GetPosition(VECTOR& pos) { pos = vPos; }
+	VECTOR GetPosition() { return vPos; }
 	//半径を取得
-	float GetRadius(void) { return radius; }
+	float GetRadius() { return radius; }
+	
+	// 座標をセット
+	void SetPosition(VECTOR _vPos) { vPos = _vPos; }
 
 	// リクエスト
 	bool RequestEnemy(const VECTOR& pos, const VECTOR& spd);

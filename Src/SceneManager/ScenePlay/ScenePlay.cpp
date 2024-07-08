@@ -19,9 +19,9 @@ void ScenePlay::Init()
 	//プレイヤー初期化
 	cPlayer.Init();
 	//球初期化
-	CShotManager.Init();
+	cShotManager.Init();
 	//敵初期化
-	CEnemyManger.Init();
+	cEnemyManger.Init();
 	// マップ初期化
 	cMap.Init();
 	//時止めフラグ初期化
@@ -33,9 +33,9 @@ void ScenePlay::Init()
 	//プレイヤーロード
 	cPlayer.Load();
 	//球ロード
-	CShotManager.Load();
+	cShotManager.Load();
 	//敵ロード
-	CEnemyManger.Load();
+	cEnemyManger.Load();
 	//フェードアウト
 	CFade::StartFade(CFade::STATE_FADE_OUT, 5);
 }
@@ -56,19 +56,19 @@ void ScenePlay::Step()
 	if (!isTimeStop) {
 		if (cCameraManager.GetCameraID() == CCameraManager::CAMERA_ID_PLAY) {
 			//プレイヤー更新処理
-			cPlayer.Step(CShotManager);
+			cPlayer.Step(cShotManager);
 			// プレイヤー更新処理
 			cPlayer.Update();
 		}
 
 		//球通常処理
-		CShotManager.Step();
+		cShotManager.Step();
 		//敵通常処理
-		CEnemyManger.Step();
+		cEnemyManger.Step();
 	}
 
 	//当たり判定
-	CollisionManager::CheckHitShotToEnemy(CEnemyManger, CShotManager);
+	CollisionManager::CheckHitShotToEnemy(cEnemyManger, cShotManager);
 	// プレイヤーと箱の当たり判定
 	CollisionManager::CheckHitPlayerToBox(cPlayer, cMap);
 
@@ -83,15 +83,14 @@ void ScenePlay::Step()
 	//エンターキー入力でクリア画面へ
 	if (Input::IsKeyPush(KEY_INPUT_RETURN))
 		SceneBace::g_scene_ID = Clear_Scene;
-
 }
 void ScenePlay::Draw()
 {
 	cBackGround.Draw();
 	cSky.Draw();
 	cPlayer.Draw();
-	CShotManager.Draw();
-	CEnemyManger.Draw();
+	cShotManager.Draw();
+	cEnemyManger.Draw();
 	cCameraManager.Draw();
 	cMap.Draw();
 }
@@ -100,7 +99,7 @@ void ScenePlay::Fin()
 	cBackGround.Exit();
 	cSky.Exit();
 	cPlayer.Exit();
-	CShotManager.Exit();
-	CEnemyManger.Exit();
+	cShotManager.Exit();
+	cEnemyManger.Exit();
 	cCameraManager.Exit();
 }

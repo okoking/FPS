@@ -14,13 +14,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//ウィンドウの状態を設定する
 	ChangeWindowMode(true);
 
+	// 画面サイズを変更
+	SetGraphMode(SCREEN_SIZE_X, SCREEN_SIZE_Y, 32);
+
 	//DXライブラリの初期化
 	if (DxLib_Init() == -1) {
 		return -1;
 	}
 
-	// 画面サイズを変更
-	SetGraphMode(SCREEN_SIZE_X, SCREEN_SIZE_Y, 32);
 
 	//描画するスクリーンを設定する
 	SetDrawScreen(DX_SCREEN_BACK);
@@ -28,6 +29,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// Zバッファに設定
 	SetUseZBuffer3D(TRUE);
 	
+	// 書き順いい感じにするやつ
+	SetWriteZBuffer3D(TRUE);
+
 	// マウスポインタの表示を消す
 	SetMouseDispFlag(FALSE);
 

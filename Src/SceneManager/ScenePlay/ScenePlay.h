@@ -13,8 +13,8 @@ class ScenePlay :public SceneBace
 private:
 	CCameraManager		cCameraManager;	// カメラマネージャー
 	CPlayer				cPlayer;		// プレイヤー処理
-	ShotManager			CShotManager;	// ショットマネージャー
-	CEnemyManager		CEnemyManger;	// エネミーマネージャー
+	ShotManager			cShotManager;	// ショットマネージャー
+	CEnemyManager		cEnemyManger;	// エネミーマネージャー
 	CBackGround			cBackGround;	// 背景
 	CSky				cSky;			// 空
 	CMap				cMap;			// マップ

@@ -31,7 +31,7 @@ public:
 
 	// “Gî•ñæ“¾
 	inline CEnemy& GetEnemy(int iID) { return m_cEnemy[iID]; }
-	inline std::vector<CEnemy>& GetEnemyVec() { return m_cEnemy; }
+	inline vector<CEnemy>& GetEnemyVec() { return m_cEnemy; }
 
 private:
 	// “GŠm•Û

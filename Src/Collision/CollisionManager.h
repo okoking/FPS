@@ -17,8 +17,7 @@ public:
 	static void CheckHitPlayerToBox(CPlayer& cPlayer,
 									CMap cMap);
 	
-	// カメラと箱の当たり判定
-	static void CheckHitCameraToBox(CEnemyManager& cEnemyManager,
-									ShotManager& cShotManager);
-
+	// プレイヤーと敵の当たり判定
+	static void CheckHitPlayerToEnemy(CPlayer& cPlayer,
+									  CEnemyManager& cEnemyManager);
 };

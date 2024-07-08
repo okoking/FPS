@@ -2,6 +2,7 @@
 #include "Collision.h"
 #include "list"
 #include "../Common.h"
+#include "../SceneManager/SceneBace/SceneBace.h"
 
 // 敵と球の当たり判定
 void CollisionManager::CheckHitShotToEnemy(CEnemyManager& cEnemyManager, ShotManager& cShotManager)
@@ -11,7 +12,7 @@ void CollisionManager::CheckHitShotToEnemy(CEnemyManager& cEnemyManager, ShotMan
 		CShot& cPlayerShot = cShotManager.GetcPlayerShot(i);
 		if (!cPlayerShot.IsActive())continue;
 
-		for (unsigned int j = 0; j < cEnemyManager.GetEnemyVec().size(); j++)
+		for (int j = 0; j < cEnemyManager.GetEnemyVec().size(); j++)
 		{
 			// 敵情報を取得し、生成されていなければ次へ
 			CEnemy& cEnemy = cEnemyManager.GetEnemy(j);
@@ -21,7 +22,7 @@ void CollisionManager::CheckHitShotToEnemy(CEnemyManager& cEnemyManager, ShotMan
 			VECTOR vShotPos, vEnemyPos;
 			float fShotRadius, fEnemyRadius;
 			cPlayerShot.GetPosition(vShotPos);
-			cEnemy.GetPosition(vEnemyPos);
+			vEnemyPos = cEnemy.GetPosition();
 			fShotRadius = cPlayerShot.GetRadius();
 			fEnemyRadius = cEnemy.GetRadius();
 
@@ -114,75 +115,37 @@ void CollisionManager::CheckHitPlayerToBox(CPlayer& cPlayer, CMap cMap)
 		m_CentervNextPos = cPlayer.GetNextPos();
 		m_CentervNextPos.y += cPlayer.GetSize().y / 2.0f;
 	}
-
-	//for (int BoxIndex = 0; BoxIndex < 10; BoxIndex++) {
-	//	if (Collision::IsHitRect3D(VGet(m_CentervPos.x, m_CentervNextPos.y, m_CentervPos.z), AvSize, box[BoxIndex].m_vPos, box[BoxIndex].m_vSize)) {
-	//		bool dirArray[6] = { false,false,false,false,false,false };
-	//		GetMoveDirection(dirArray);
-	//		if (dirArray[0]) {
-	//			// 上のめり込み量の計算
-	//			float calc = (m_CentervNextPos.y + AvSize.y / 2.0f) - (box[BoxIndex].m_vPos.y - box[BoxIndex].m_vSize.y / 2.0f);
-	//			m_vNextPos.y -= calc;
-
-	//			// 頭をぶつけたのでスピードを調整
-	//			m_vSpeed.y = 0.0f;
-	//		}
-	//		if (dirArray[1]) {
-	//			// 下のめり込み量の計算
-	//			float calc = (box[BoxIndex].m_vPos.y + box[BoxIndex].m_vSize.y / 2.0f) - (m_CentervNextPos.y - AvSize.y / 2.0f);
-	//			m_vNextPos.y += calc;
-	//			// 着地している判定に
-	//			isLanding = true;
-	//		}
-	//		m_CentervNextPos = cPlayer.GetNextPos();
-	//		m_CentervNextPos.y += cPlayer.GetSize().y / 2.0f;
-	//	}
-	//}
-
-	//for (int BoxIndex = 0; BoxIndex < 10; BoxIndex++) {
-	//	// 左右の当たり判定
-	//	if (Collision::IsHitRect3D(VGet(m_CentervNextPos.x, m_CentervNextPos.y, m_CentervPos.z), AvSize, box[BoxIndex].m_vPos, box[BoxIndex].m_vSize)) {
-	//		bool dirArray[6] = { false,false,false,false,false,false };
-	//		GetMoveDirection(dirArray);
-	//		if (dirArray[2]) {
-	//			// 左のめり込み量の計算
-	//			float calc = (box[BoxIndex].m_vPos.x + box[BoxIndex].m_vSize.x / 2.0f) - (m_CentervNextPos.x - AvSize.x / 2.0f);
-	//			m_vNextPos.x += calc;
-	//		}
-	//		if (dirArray[3]) {
-	//			// 右のめり込み量の計算
-	//			float calc = (m_CentervNextPos.x + AvSize.x / 2.0f) - (box[BoxIndex].m_vPos.x - box[BoxIndex].m_vSize.x / 2.0f);
-	//			m_vNextPos.x -= calc;
-	//		}
-	//	}
-	//	m_CentervNextPos = cPlayer.GetNextPos();
-	//	m_CentervNextPos.y += cPlayer.GetSize().y / 2.0f;
-	//}
-
-	//for (int BoxIndex = 0; BoxIndex < 10; BoxIndex++) {
-	//	// 奥前の当たり判定
-	//	if (Collision::IsHitRect3D(VGet(m_CentervNextPos.x, m_CentervNextPos.y, m_CentervNextPos.z), AvSize, box[BoxIndex].m_vPos, box[BoxIndex].m_vSize)) {
-	//		bool dirArray[6] = { false,false,false,false,false,false };
-	//		GetMoveDirection(dirArray);
-	//		if (dirArray[4]) {
-	//			// 奥のめり込み量の計算
-	//			float calc = (m_CentervNextPos.z + AvSize.z / 2.0f) - (box[BoxIndex].m_vPos.z - box[BoxIndex].m_vSize.z / 2.0f);
-	//			m_vNextPos.z -= calc;
-	//		}
-	//		if (dirArray[5]) {
-	//			// 前のめり込み量の計算
-	//			float calc = (box[BoxIndex].m_vPos.z + box[BoxIndex].m_vSize.z / 2.0f) - (m_CentervNextPos.z - AvSize.z / 2.0f);
-	//			m_vNextPos.z += calc;
-	//		}
-	//	}
-	//	m_CentervNextPos = cPlayer.GetNextPos();
-	//	m_CentervNextPos.y += cPlayer.GetSize().y / 2.0f;
-	//}
-
+	
 	// カメラの移動
 	cPlayer.CameraForcuMovement();
 
 	// 座標更新
 	cPlayer.UpdataPos();
+}
+
+// プレイヤーと敵の当たり判定
+void CollisionManager::CheckHitPlayerToEnemy(CPlayer& cPlayer, CEnemyManager& cEnemyManager)
+{
+	VECTOR m_CentervPos = cPlayer.GetPos();
+	m_CentervPos.y += cPlayer.GetSize().y / 2.0f;
+
+	VECTOR m_CentervNextPos = cPlayer.GetNextPos();
+	m_CentervNextPos.y += cPlayer.GetSize().y / 2.0f;
+
+	VECTOR AvSize = cPlayer.GetSize();
+
+	// 上下の当たり判定
+	for (int i = 0; i < cEnemyManager.GetEnemyVec().size(); i++){
+		// 敵情報を取得し、生成されていなければ次へ
+		CEnemy& cEnemy = cEnemyManager.GetEnemy(i);
+
+		if (!cEnemy.IsActive())continue;
+
+		VECTOR EnemyPos = cEnemy.GetPosition();
+		
+		if (Collision::IsHitRect3D(VGet(m_CentervPos.x, m_CentervNextPos.y, m_CentervPos.z), AvSize, EnemyPos, ENEMY_SIZE)) {
+			SceneBace::g_scene_ID = Clear_Scene;
+		}
+	}
 
 }
