@@ -1,8 +1,6 @@
 #pragma once
 #include "../Common.h"
 
-constexpr int MAP_NUM = 10;
-
 class CMap {
 private:
 	class CMapInfo {

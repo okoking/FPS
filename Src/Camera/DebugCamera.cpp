@@ -43,33 +43,33 @@ void CDebugCamera::Init(VECTOR vPos, float fRot) {
 void CDebugCamera::Step() {
 	// ÉJÉÅÉâÇÃà⁄ìÆÇÃëÄçÏ
 	float fSpd = 0.0f;
-	if (Input::IsKeyKeep(KEY_INPUT_W)) {
+	if (Input::Key::Keep(KEY_INPUT_W)) {
 		fSpd = CAMERA_MOVE_SPEED;
 	}
-	else if (Input::IsKeyKeep(KEY_INPUT_S)) {
+	else if (Input::Key::Keep(KEY_INPUT_S)) {
 		fSpd = -CAMERA_MOVE_SPEED;
 	}
 	float fRot = 0.0f;
-	if (Input::IsKeyKeep(KEY_INPUT_A)) {
+	if (Input::Key::Keep(KEY_INPUT_A)) {
 		fSpd = -CAMERA_MOVE_SPEED;
 		fRot = 90.0f * DX_PI_F / 180.0f;
 	}
-	else if (Input::IsKeyKeep(KEY_INPUT_D)) {
+	else if (Input::Key::Keep(KEY_INPUT_D)) {
 		fSpd = CAMERA_MOVE_SPEED;
 		fRot = 90.0f * DX_PI_F / 180.0f;
 	}
 
 	// ÉJÉÅÉâÇÃå¸Ç´ÇÃëÄçÏ
-	if (Input::IsKeyKeep(KEY_INPUT_UP)) {
+	if (Input::Key::Keep(KEY_INPUT_UP)) {
 		m_vCameraRot.x -= CAMERA_ROTATE_SPEED;
 	}
-	else if (Input::IsKeyKeep(KEY_INPUT_DOWN)) {
+	else if (Input::Key::Keep(KEY_INPUT_DOWN)) {
 		m_vCameraRot.x += CAMERA_ROTATE_SPEED;
 	}
-	else if (Input::IsKeyKeep(KEY_INPUT_LEFT)) {
+	else if (Input::Key::Keep(KEY_INPUT_LEFT)) {
 		m_vCameraRot.y -= CAMERA_ROTATE_SPEED;
 	}
-	else if (Input::IsKeyKeep(KEY_INPUT_RIGHT)) {
+	else if (Input::Key::Keep(KEY_INPUT_RIGHT)) {
 		m_vCameraRot.y += CAMERA_ROTATE_SPEED;
 	}
 	

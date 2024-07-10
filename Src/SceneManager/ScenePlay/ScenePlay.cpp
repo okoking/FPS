@@ -37,18 +37,18 @@ void ScenePlay::Init()
 	//敵ロード
 	cEnemyManager.Load();
 	//フェードアウト
-	CFade::StartFade(CFade::STATE_FADE_OUT, 5);
+	CFade::StartFade(CFade::STATE_FADE_OUT, FADE_SPEED);
 }
 
 void ScenePlay::Step()
 {
-	if (Input::IsKeyRelease(KEY_INPUT_LCONTROL)) {
+	if (Input::Key::Release(KEY_INPUT_LCONTROL)) {
 		// マウスポインタの表示を消す
 		SetMouseDispFlag(FALSE);
 		SetMousePoint(HALF_SCREEN_SIZE_X, HALF_SCREEN_SIZE_Y);
 	}
 
-	if (Input::IsKeyKeep(KEY_INPUT_LCONTROL)) {
+	if (Input::Key::Keep(KEY_INPUT_LCONTROL)) {
 		// ALT押している間はマウスが出るように
 		SetMouseDispFlag(TRUE);
 	}
@@ -58,7 +58,7 @@ void ScenePlay::Step()
 	}
 
 	// デバッグ中Tを押すと時を止めれる(もう一度押すと戻る)
-	if (cCameraManager.GetCameraID() == CCameraManager::CAMERA_ID_DEBUG && Input::IsKeyPush(KEY_INPUT_T)) {
+	if (cCameraManager.GetCameraID() == CCameraManager::CAMERA_ID_DEBUG && Input::Key::Push(KEY_INPUT_T)) {
 		if (isTimeStop)
 			isTimeStop = false;
 		else
@@ -90,16 +90,16 @@ void ScenePlay::Step()
 	CollisionManager::CheckHitShotToBox(cShotManager, cMap);
 
 	//カメラ切り替え処理
-	if (Input::IsKeyPush(KEY_INPUT_C))
+	if (Input::Key::Push(KEY_INPUT_C))
 		cCameraManager.ChangeCamera(CCameraManager::CAMERA_ID_DEBUG);
-	else if (Input::IsKeyPush(KEY_INPUT_V))
+	else if (Input::Key::Push(KEY_INPUT_V))
 		cCameraManager.ChangeCamera(CCameraManager::CAMERA_ID_PLAY);
 
 	//カメラ更新処理
 	cCameraManager.Step(cPlayer.GetCameraForcusPos());
 
 	//エンターキー入力でクリア画面へ
-	if (Input::IsKeyPush(KEY_INPUT_RETURN))
+	if (Input::Key::Push(KEY_INPUT_RETURN))
 		SceneBace::g_scene_ID = Clear_Scene;
 }
 void ScenePlay::Draw()

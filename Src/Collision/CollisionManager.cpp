@@ -21,9 +21,9 @@ void CollisionManager::CheckHitShotToEnemy(CEnemyManager& cEnemyManager, ShotMan
 			// À•W‚Æ”¼Œa‚ðŽæ“¾
 			VECTOR vShotPos, vEnemyPos;
 			float fShotRadius, fEnemyRadius;
-			cPlayerShot.GetPosition(vShotPos);
+			cPlayerShot.GetPos(vShotPos);
 			cPlayerShot.GetRadius(fShotRadius);
-			vEnemyPos = cEnemy.GetPosition();
+			vEnemyPos = cEnemy.GetPos();
 			fEnemyRadius = cEnemy.GetRadius();
 
 			// “G‚Ì‚Ù‚¤‚Í“–‚½‚è”»’è‚Ì’†S‚ð”¼Œa•ª•‚‚©‚¹‚é
@@ -141,9 +141,12 @@ void CollisionManager::CheckHitPlayerToEnemy(CPlayer& cPlayer, CEnemyManager& cE
 
 		if (!cEnemy.IsActive())continue;
 
-		VECTOR EnemyPos = cEnemy.GetPosition();
-		
-		if (Collision::IsHitRect3D(VGet(m_CentervPos.x, m_CentervNextPos.y, m_CentervPos.z), AvSize, EnemyPos, ENEMY_SIZE)) {
+		VECTOR EnemyPos = cEnemy.GetPos();
+		//EnemyPos
+
+		VECTOR EnemySize = cEnemy.GetSize();
+
+		if (Collision::IsHitRect3D(VGet(m_CentervPos.x, m_CentervNextPos.y, m_CentervPos.z), AvSize, EnemyPos, EnemySize)) {
 			SceneBace::g_scene_ID = Clear_Scene;
 		}
 	}
@@ -165,7 +168,7 @@ void CollisionManager::CheckHitShotToBox(ShotManager& cShotManager, CMap cMap)
 				VECTOR vMapPos, vMapSize;
 
 				// ‹…‚ÌÀ•W
-				cPlayerShot.GetPosition(vShotPos);
+				cPlayerShot.GetPos(vShotPos);
 
 				// ” ‚ÌÀ•W
 				vMapPos = itr->GetPos();

@@ -39,7 +39,7 @@ public:
 	bool IsActive() { return _isActive; }
 	void HitCalc() { _isActive = false; }
 	// À•Wæ“¾
-	void GetPosition(VECTOR& vPos) { vPos = _vPos; }
+	void GetPos(VECTOR& vPos) { vPos = _vPos; }
 	//@”¼Œaæ“¾
 	void GetRadius(float& Rad) { Rad = m_fRadius; }
 };

@@ -1,9 +1,13 @@
 #include "EnemyManager.h"
 #include "../Input/Input.h"
+#include "../Draw3D/Draw3D.h"
 
 // 定義関連
-static const char ENEMY_MODEL_PATH[] = { "Data/Model/enemy/enemy.pmx" };
-static const int WAIT_TIME = 60;	// 敵が再登場するまでの時間
+constexpr int ENEMY_NUM = 50;	// 敵の描画最大数
+constexpr char ENEMY_MODEL_PATH[] = { "Data/Model/enemy/enemy.pmx" };	// 敵のモデルパス
+constexpr int WAIT_TIME = 60;	// 敵が再登場するまでの時間
+constexpr VECTOR INIT_ENEMY_POS = { -100.0f, 0.0f, 200.0f };
+constexpr int X_RAND_RANGE = 200;
 
 // コンストラクタ
 CEnemyManager::CEnemyManager()
@@ -71,7 +75,14 @@ void CEnemyManager::Step()
 // 描画処理
 void CEnemyManager::Draw()
 {
+	VECTOR EnemyPos;
 	for (int i = 0; i < m_cEnemy.size(); i++) {
+		if (!m_cEnemy[i].IsActive())continue;
+
+		// 敵の座標サイズの半分上に表示
+		EnemyPos = m_cEnemy[i].GetPos();
+		EnemyPos.y += m_cEnemy[i].GetSize().y / 2.0f;
+		Draw3D::Draw3DBox(EnemyPos, m_cEnemy[i].GetSize());
 		m_cEnemy[i].Draw();
 	}
 }
@@ -79,11 +90,11 @@ void CEnemyManager::Draw()
 // 敵確保
 void CEnemyManager::RequestEnemy()
 {
-	VECTOR vPos = VGet(static_cast<float>(GetRand(200)) - 100.0f, 0.0f, 200.0f);
-	VECTOR vSpeed = VGet(0.0f, 0.0f, -0.5f);
-
+	VECTOR vPos = INIT_ENEMY_POS;
+	vPos.x += static_cast<float>(GetRand(X_RAND_RANGE));
+	
 	for (int i = 0; i < m_cEnemy.size(); i++) {
-		if (m_cEnemy[i].RequestEnemy(vPos, vSpeed)) {
+		if (m_cEnemy[i].RequestEnemy(vPos, m_cEnemy[i].GetSpeed())) {
 			break;
 		}
 	}

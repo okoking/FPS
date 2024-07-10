@@ -1,6 +1,6 @@
 #include "Shot.h"
 constexpr float RADIUS = 5.0f;
-
+constexpr float SHOT_FLENGTH = 1000.0f;
 // コンストラクタ
 CShot::CShot()
 {
@@ -55,9 +55,8 @@ void CShot::Step()
 	// 座標に速度を加算
 	_vPos = VAdd(_vPos, _vSpeed);
 	// 一定範囲を超えたら消す
-	float fLength = 1000.0f;
-	if (_vPos.x > fLength || _vPos.x<-fLength
-		|| _vPos.z>fLength || _vPos.z < -fLength)
+	if (_vPos.x > SHOT_FLENGTH || _vPos.x<-SHOT_FLENGTH
+		|| _vPos.z>SHOT_FLENGTH || _vPos.z < -SHOT_FLENGTH)
 	{
 		_isActive = false;
 	}

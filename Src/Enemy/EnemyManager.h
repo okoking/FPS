@@ -1,8 +1,7 @@
 #pragma once
 #include "Enemy.h"
 #include "../Common.h"
-
-const int ENEMY_NUM = 50;
+#include "../Draw3D/Draw3D.h"
 
 class CEnemyManager
 {

@@ -50,7 +50,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//ゲームメインループ
 	while (ProcessMessage() != -1)
 	{
-		if (Input::IsKeyPush(KEY_INPUT_ESCAPE) == 1)
+		if (Input::Key::Push(KEY_INPUT_ESCAPE) == 1)
 		{
 			//エスケープキーが押されたら終了
 			break;
@@ -90,12 +90,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 // 初期化祭り
 void InitGame()
 {
-	Input::InitInput();
+	Input::Init();
 }
 
 // staticのStepまとめ
 void StepGame()
 {
-	Input::StepInput();
+	Input::Step();
 	CFade::Step();
 }

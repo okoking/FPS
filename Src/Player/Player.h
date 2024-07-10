@@ -3,10 +3,6 @@
 #include "../Shot/ShotManager.h"
 #include "../Animation/Model.h"
 
-struct StBox {
-	VECTOR m_vPos;
-	VECTOR m_vSize;
-};
 // アニメーション一覧
 enum tagAnim {
 	ANIMID_WAIT,		// 待機モーション
@@ -97,7 +93,7 @@ private:
 		PLAYER_STATE_NUM,
 	};
 
-	VECTOR m_vSpeed;
+	VECTOR m_vSpeed;			// スピード
 	VECTOR m_vNextPos;			// 次のフレームの座標
 	VECTOR m_CameraForcusPos;	// かめらの注視点
 	tagPlayerState m_eState;	// プレイヤーの状態

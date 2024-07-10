@@ -1,13 +1,11 @@
 #pragma once
 #include "../Common.h"
 
-constexpr float RADIUS = 4.0f;
-constexpr VECTOR ENEMY_SIZE = { 4.0f,4.0f,4.0f };
-
 class CEnemy {
 private:
 	VECTOR vPos;	//座標
 	VECTOR vSpd;	//速度
+	VECTOR vSize;	//サイズ
 	float radius;	//半径
 	int	   Handle;	//ハンドル
 	bool   isActive;//生存フラグ
@@ -26,10 +24,13 @@ public:
 	//生存判定を返す
 	bool IsActive() { return isActive; }
 	//座標を取得
-	VECTOR GetPosition() { return vPos; }
+	VECTOR GetPos() { return vPos; }
+	//スピードを取得
+	VECTOR GetSpeed() { return vSpd; }
 	//半径を取得
 	float GetRadius() { return radius; }
-	
+	//サイズを取得
+	VECTOR GetSize() { return vSize; }
 	// 座標をセット
 	void SetPosition(VECTOR _vPos) { vPos = _vPos; }
 

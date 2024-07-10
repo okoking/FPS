@@ -19,7 +19,7 @@ constexpr VECTOR PLAYER_SIZE = { 8.0f,20.0f,8.0f };	// プレイヤーのサイズ
 constexpr float SHOT_SPEED = 5.0f;					// 球のスピード
 constexpr float SHOT_POS_HEIGHT = 10.0f;			// 球の発射される高さ
 constexpr float PLAYER_ANIMATION_SPEED = 0.5f;		// アニメーションの再生速度
-
+constexpr float PLAYER_DIR_MAG = 45.0f;				// プレイヤーの向き（倍率）
 // 重力
 constexpr float GRAVITY = 0.15f;
 constexpr float JUMP_POWER = 2.5f;
@@ -133,79 +133,79 @@ void CPlayer::Moving()
 
 	VECTOR vRot = { 0.0f,0.0f,0.0f };
 
-	if (Input::IsKeyDown(KEY_INPUT_W)) {
-		if (Input::IsKeyDown(KEY_INPUT_A)) {
+	if (Input::Key::Down(KEY_INPUT_W)) {
+		if (Input::Key::Down(KEY_INPUT_A)) {
 			m_Dir = DIR_TOPLEFT;
 		}
-		else if (Input::IsKeyDown(KEY_INPUT_D)) {
+		else if (Input::Key::Down(KEY_INPUT_D)) {
 			m_Dir = DIR_TOPRIGHT;
 		}
 		else {
 			m_Dir = DIR_TOP;
 		}
-		m_vRot.y = CViewpoint::GetRot().y + (static_cast<float>(m_Dir) * 45.0f) * CALC_ANGLE;
+		m_vRot.y = CViewpoint::GetRot().y + (static_cast<float>(m_Dir) * PLAYER_DIR_MAG) * CALC_ANGLE;
 	}
-	else if (Input::IsKeyDown(KEY_INPUT_S)) {
-		if (Input::IsKeyDown(KEY_INPUT_A)) {
+	else if (Input::Key::Down(KEY_INPUT_S)) {
+		if (Input::Key::Down(KEY_INPUT_A)) {
 			m_Dir = DIR_LOWERLEFT;
 		}
-		else if (Input::IsKeyDown(KEY_INPUT_D)) {
+		else if (Input::Key::Down(KEY_INPUT_D)) {
 			m_Dir = DIR_BOTTOMRIGHT;
 		}
 		else {
 			m_Dir = DIR_UNDER;
 		}
-		m_vRot.y = CViewpoint::GetRot().y + (static_cast<float>(m_Dir) * 45.0f) * CALC_ANGLE;
+		m_vRot.y = CViewpoint::GetRot().y + (static_cast<float>(m_Dir) * PLAYER_DIR_MAG) * CALC_ANGLE;
 	}
 
-	if (Input::IsKeyDown(KEY_INPUT_A)) {
-		m_vRot.y = (static_cast<float>(m_Dir) * 45.0f) * CALC_ANGLE;
-		if (Input::IsKeyDown(KEY_INPUT_W)) {
+	if (Input::Key::Down(KEY_INPUT_A)) {
+		m_vRot.y = (static_cast<float>(m_Dir) * PLAYER_DIR_MAG) * CALC_ANGLE;
+		if (Input::Key::Down(KEY_INPUT_W)) {
 			m_Dir = DIR_TOPLEFT;
 		}
-		else if (Input::IsKeyDown(KEY_INPUT_S)) {
+		else if (Input::Key::Down(KEY_INPUT_S)) {
 			m_Dir = DIR_LOWERLEFT;
 		}
 		else {
 			m_Dir = DIR_LEFT;
 		}
-		m_vRot.y = CViewpoint::GetRot().y + (static_cast<float>(m_Dir) * 45.0f) * CALC_ANGLE;
+		m_vRot.y = CViewpoint::GetRot().y + (static_cast<float>(m_Dir) * PLAYER_DIR_MAG) * CALC_ANGLE;
 	}
-	else if (Input::IsKeyDown(KEY_INPUT_D)) {
-		if (Input::IsKeyDown(KEY_INPUT_W)) {
+	else if (Input::Key::Down(KEY_INPUT_D)) {
+		if (Input::Key::Down(KEY_INPUT_W)) {
 			m_Dir = DIR_TOPRIGHT;
 		}
-		else if (Input::IsKeyDown(KEY_INPUT_S)) {
+		else if (Input::Key::Down(KEY_INPUT_S)) {
 			m_Dir = DIR_BOTTOMRIGHT;
 		}
 		else {
 			m_Dir = DIR_RIGHT;
 		}
-		m_vRot.y = CViewpoint::GetRot().y + (static_cast<float>(m_Dir) * 45.0f) * CALC_ANGLE;
+		m_vRot.y = CViewpoint::GetRot().y + (static_cast<float>(m_Dir) * PLAYER_DIR_MAG) * CALC_ANGLE;
 	}
 
-	if (Input::IsKeyDown(KEY_INPUT_LSHIFT)) {
+	if (Input::Key::Down(KEY_INPUT_LSHIFT)) {
 		MoveSpeed = -DASH_SPEED;
 	}
 
-	if (Input::IsKeyDown(KEY_INPUT_W) ||
-		Input::IsKeyDown(KEY_INPUT_A) ||
-		Input::IsKeyDown(KEY_INPUT_S) ||
-		Input::IsKeyDown(KEY_INPUT_D) ) {
+	if (Input::Key::Down(KEY_INPUT_W) ||
+		Input::Key::Down(KEY_INPUT_A) ||
+		Input::Key::Down(KEY_INPUT_S) ||
+		Input::Key::Down(KEY_INPUT_D) ) {
 		fSpd = MoveSpeed;
 	}
 
 	m_eState = PLAYER_STATE_WAIT;
 
-	if (fSpd != 0.0f && !Input::IsKeyDown(KEY_INPUT_LSHIFT))
+	if (fSpd != 0.0f && !Input::Key::Down(KEY_INPUT_LSHIFT))
 		m_eState = PLAYER_STATE_WALK;
-	else if (fSpd != 0.0f && Input::IsKeyDown(KEY_INPUT_LSHIFT))
+	else if (fSpd != 0.0f && Input::Key::Down(KEY_INPUT_LSHIFT))
 		m_eState = PLAYER_STATE_RUN;
 
 
 	// ジャンプ処理===================================
 	if (isLanding) {
-		if (Input::IsKeyPush(KEY_INPUT_SPACE)) {
+		if (Input::Key::Push(KEY_INPUT_SPACE)) {
 			m_vSpeed.y += JUMP_POWER;
 		}
 	}
@@ -239,7 +239,10 @@ void CPlayer::Moving()
 void CPlayer::Shooting(ShotManager& cShotManager)
 {
 	// Zキーで球を発射
-	if (Input::IsKeyDown(KEY_INPUT_LEFT)) {
+	if (Input::Mouse::Down(MOUSE_INPUT_LEFT)) {
+		// プレイヤーの角度を変更
+		m_vRot.y = CViewpoint::GetRot().y;
+
 		// プレイヤーの体から出るように座標を上げる
 		VECTOR vPos = m_vPos;
 		vPos.y += SHOT_POS_HEIGHT;
@@ -266,11 +269,11 @@ void CPlayer::ExecDefault()
 		// 走っている状態なら走りモーションに
 		RequestLoop(ANIMID_RUN, PLAYER_ANIMATION_SPEED);
 	}
-	else if (Input::IsKeyPush(KEY_INPUT_1)) {
+	else if (Input::Key::Push(KEY_INPUT_1)) {
 		// 1キーを押すとぶらぶらする
 		RequestLoop(ANIMID_DANGLING, PLAYER_ANIMATION_SPEED);
 	}
-	else if (Input::IsKeyPush(KEY_INPUT_2)) {
+	else if (Input::Key::Push(KEY_INPUT_2)) {
 		// 上下にくねくね
 		RequestLoop(ANIMID_UPDOWN, PLAYER_ANIMATION_SPEED);
 	}
@@ -287,11 +290,11 @@ void CPlayer::ExecWalk()
 		// 走っている状態なら走りモーションに
 		RequestLoop(ANIMID_RUN, PLAYER_ANIMATION_SPEED);
 	}
-	else if (Input::IsKeyPush(KEY_INPUT_1)) {
+	else if (Input::Key::Push(KEY_INPUT_1)) {
 		// 1キーを押すとぶらぶらする
 		RequestLoop(ANIMID_DANGLING, PLAYER_ANIMATION_SPEED);
 	}
-	else if (Input::IsKeyPush(KEY_INPUT_2)) {
+	else if (Input::Key::Push(KEY_INPUT_2)) {
 		// 上下にくねくね
 		RequestLoop(ANIMID_UPDOWN, PLAYER_ANIMATION_SPEED);
 	}
@@ -308,11 +311,11 @@ void CPlayer::ExecRun()
 		// 歩いている状態なら歩きモーションに
 		RequestLoop(ANIMID_WALK, PLAYER_ANIMATION_SPEED);
 	}
-	else if (Input::IsKeyPush(KEY_INPUT_1)) {
+	else if (Input::Key::Push(KEY_INPUT_1)) {
 		// 1キーを押すとぶらぶらする
 		RequestLoop(ANIMID_DANGLING, PLAYER_ANIMATION_SPEED);
 	}
-	else if (Input::IsKeyPush(KEY_INPUT_2)) {
+	else if (Input::Key::Push(KEY_INPUT_2)) {
 		// 上下にくねくね
 		RequestLoop(ANIMID_UPDOWN, PLAYER_ANIMATION_SPEED);
 	}
@@ -320,7 +323,7 @@ void CPlayer::ExecRun()
 
 void CPlayer::ExecWait()
 {
-	if (Input::IsKeyPush(KEY_INPUT_1)) {
+	if (Input::Key::Push(KEY_INPUT_1)) {
 		// 1キーを押すと手を振る
 		RequestLoop(ANIMID_SHAKE, PLAYER_ANIMATION_SPEED);
 	}
@@ -329,7 +332,7 @@ void CPlayer::ExecWait()
 void CPlayer::ExecUpDown()
 {
 	if (CModel::m_sAnimData.m_fFrm + 10.0f * CModel::m_sAnimData.m_fSpd >= CModel::m_sAnimData.m_fEndFrm) {
-		if (Input::IsKeyPush(KEY_INPUT_2)) {
+		if (Input::Key::Push(KEY_INPUT_2)) {
 			// ダンス
 			RequestLoop(ANIMID_DANCE, PLAYER_ANIMATION_SPEED);
 		}
@@ -338,7 +341,7 @@ void CPlayer::ExecUpDown()
 
 void CPlayer::ExecShake()
 {
-	if (Input::IsKeyPush(KEY_INPUT_1)) {
+	if (Input::Key::Push(KEY_INPUT_1)) {
 		// 1キーを押すとピアノ
 		RequestLoop(ANIMID_PIANO, PLAYER_ANIMATION_SPEED);
 	}
@@ -346,7 +349,7 @@ void CPlayer::ExecShake()
 
 void CPlayer::ExecPiano()
 {
-	if (Input::IsKeyPush(KEY_INPUT_1)) {
+	if (Input::Key::Push(KEY_INPUT_1)) {
 		// ピアノ中に1キーを押すと待機モーションにに
 		RequestLoop(ANIMID_WAIT, PLAYER_ANIMATION_SPEED);
 	}
@@ -354,7 +357,7 @@ void CPlayer::ExecPiano()
 
 void CPlayer::ExecDance()
 {
-	if (Input::IsKeyPush(KEY_INPUT_2)) {
+	if (Input::Key::Push(KEY_INPUT_2)) {
 		// ダンス中に2を押すと待機に
 		RequestLoop(ANIMID_WAIT, PLAYER_ANIMATION_SPEED);
 	}

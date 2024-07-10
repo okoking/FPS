@@ -1,10 +1,14 @@
 #include "Enemy.h"
 #include "../Sound/SoundManager.h"
-
+constexpr float RADIUS = 4.0f;
+constexpr VECTOR ENEMY_SIZE = { 8.0f,50.0f,8.0f };
+constexpr VECTOR ENEMY_SPEED = { 0.0f,0.0f,-0.5f };
+constexpr float FLENGTH = 300.0f;
 CEnemy::CEnemy() {
 	memset(&vPos, 0, sizeof(VECTOR));
 	memset(&vSpd, 0, sizeof(VECTOR));
-	radius = RADIUS;
+	memset(&vSize, 0, sizeof(VECTOR));
+	radius = 0.0f;
 	Handle = -1;
 	isActive = false;
 }
@@ -15,7 +19,9 @@ CEnemy::~CEnemy() {
 
 void CEnemy::Init() {
 	memset(&vPos, 0, sizeof(VECTOR));
-	memset(&vSpd, 0, sizeof(VECTOR));
+	vSpd = ENEMY_SPEED;
+	radius = RADIUS;
+	vSize = ENEMY_SIZE;
 	Handle = -1;
 	isActive = false;
 }
@@ -44,9 +50,8 @@ void CEnemy::Step(){
 
 	vPos = VAdd(vPos, vSpd);
 
-	float flength = 300.0f;
-	if (vPos.x > flength || vPos.x < -flength
-		|| vPos.z > flength || vPos.z < -flength) {
+	if (vPos.x > FLENGTH || vPos.x < -FLENGTH
+		|| vPos.z > FLENGTH || vPos.z < -FLENGTH) {
 		isActive = false;
 	}
 
