@@ -18,7 +18,7 @@ constexpr float FORCUS_DISSPEED = -2.5f;	// ジャンプ時の注視点の下限移動速度
 constexpr VECTOR PLAYER_SIZE = { 8.0f,20.0f,8.0f };	// プレイヤーのサイズ
 constexpr float SHOT_SPEED = 5.0f;					// 球のスピード
 constexpr float SHOT_POS_HEIGHT = 10.0f;			// 球の発射される高さ
-constexpr float PLAYER_ANIMATION_SPEED = 0.5f;
+constexpr float PLAYER_ANIMATION_SPEED = 0.5f;		// アニメーションの再生速度
 
 // 重力
 constexpr float GRAVITY = 0.15f;
