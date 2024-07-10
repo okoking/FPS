@@ -14,11 +14,11 @@ void CollisionManager::CheckHitShotToEnemy(CEnemyManager& cEnemyManager, ShotMan
 
 		for (int j = 0; j < cEnemyManager.GetEnemyVec().size(); j++)
 		{
-			// 敵情報を取得し、生成されていなければ次へ
+			// プレイヤー情報を取得し、生成されていなければ次へ
 			CEnemy& cEnemy = cEnemyManager.GetEnemy(j);
 			if (!cEnemy.IsActive())continue;
 
-			//　座標と半径を取得
+			// 座標と半径を取得
 			VECTOR vShotPos, vEnemyPos;
 			float fShotRadius, fEnemyRadius;
 			cPlayerShot.GetPosition(vShotPos);
@@ -148,4 +148,37 @@ void CollisionManager::CheckHitPlayerToEnemy(CPlayer& cPlayer, CEnemyManager& cE
 		}
 	}
 
+}
+
+// 球と箱の当たり判定
+void CollisionManager::CheckHitShotToBox(ShotManager& cShotManager, CMap cMap)
+{
+	for (int i = 0; i < cShotManager.GetcPlayerShotVec().size(); i++) {
+		// プレイヤー情報を取得し、発射されてなければ次へ
+		CShot& cPlayerShot = cShotManager.GetcPlayerShot(i);
+		if (!cPlayerShot.IsActive())continue;
+
+		for (auto itr = cMap.GetMapInfo().begin(); itr != cMap.GetMapInfo().end(); ++itr) {
+			{
+				// 座標と半径を取得
+				VECTOR vShotPos;
+				VECTOR vMapPos, vMapSize;
+
+				// 球の座標
+				cPlayerShot.GetPosition(vShotPos);
+
+				// 箱の座標
+				vMapPos = itr->GetPos();
+				// 箱のサイズ
+				vMapSize = itr->GetSize();
+
+				// 球と箱の当たり判定
+				if (Collision::IsHitRect3D(vShotPos, SHOT_SIZE, vMapPos, vMapSize))
+				{
+					// ここまでくれば当たっている
+					cPlayerShot.HitCalc();
+				}
+			}
+		}
+	}
 }

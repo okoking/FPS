@@ -1,5 +1,8 @@
 #include "Map.h"
 #include "../Draw3D/Draw3D.h"
+constexpr VECTOR MAP_SIZE = { 6.0f,6.0f,6.0f };
+constexpr VECTOR MAP_INIT_POS = { 8.0f,MAP_SIZE.y / 2.0f,8.0f };
+
 // èâä˙âª
 void CMap::Init()
 {

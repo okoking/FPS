@@ -7,21 +7,22 @@
 #include "../Viewpoint/Viewpoint.h"
 
 // 定義関連
-const char PLAYER_MODEL_PATH[] =
+constexpr char PLAYER_MODEL_PATH[] =
 		{ "Data/Model/char/char.pmd" };	// ロードするファイル名
-const float ROTATE_SPEED = 0.1f;		// プレイヤーの回転速度
-const float MOVE_SPEED = 0.5f;			// プレイヤーの移動速度
-const float DASH_SPEED = 1.5f;			// 走るスピード
-const float FORCUS_SPEED_MAG = 3.0f;	// ジャンプ時の注視点の移動速度倍率
-const float FORCUS_SPEED = -2.0f;		// ジャンプ時の注視点の最高移動速度
-const float FORCUS_DISSPEED = -2.5f;	// ジャンプ時の注視点の下限移動速度
-
-const VECTOR BOX_SIZE = { 8.0f,20.0f,8.0f };
-const VECTOR PLAYER_SIZE = { 8.0f,20.0f,8.0f };
+constexpr float ROTATE_SPEED = 0.1f;		// プレイヤーの回転速度
+constexpr float MOVE_SPEED = 0.5f;			// プレイヤーの移動速度
+constexpr float DASH_SPEED = 1.5f;			// 走るスピード
+constexpr float FORCUS_SPEED_MAG = 3.0f;	// ジャンプ時の注視点の移動速度倍率
+constexpr float FORCUS_SPEED = -2.0f;		// ジャンプ時の注視点の最高移動速度
+constexpr float FORCUS_DISSPEED = -2.5f;	// ジャンプ時の注視点の下限移動速度
+constexpr VECTOR PLAYER_SIZE = { 8.0f,20.0f,8.0f };	// プレイヤーのサイズ
+constexpr float SHOT_SPEED = 5.0f;					// 球のスピード
+constexpr float SHOT_POS_HEIGHT = 10.0f;			// 球の発射される高さ
+constexpr float PLAYER_ANIMATION_SPEED = 0.5f;
 
 // 重力
-const float GRAVITY = 0.15f;
-const float JUMP_POWER = 2.5f;
+constexpr float GRAVITY = 0.15f;
+constexpr float JUMP_POWER = 2.5f;
 
 // コンストラクタ
 CPlayer::CPlayer() {
@@ -58,7 +59,7 @@ void CPlayer::Init(){
 // データ関連のロード
 void CPlayer::Load(){
 	CModel::LoadModel(PLAYER_MODEL_PATH);
-	RequestLoop(ANIMID_WAIT, 0.5f);
+	RequestLoop(ANIMID_WAIT, PLAYER_ANIMATION_SPEED);
 }
 
 // 描画
@@ -238,13 +239,12 @@ void CPlayer::Moving()
 void CPlayer::Shooting(ShotManager& cShotManager)
 {
 	// Zキーで球を発射
-	if (Input::IsKeyDown(KEY_INPUT_Z)) {
+	if (Input::IsKeyDown(KEY_INPUT_LEFT)) {
 		// プレイヤーの体から出るように座標を上げる
 		VECTOR vPos = m_vPos;
-		vPos.y += 10.0f;
+		vPos.y += SHOT_POS_HEIGHT;
 		// 速度はプレイヤーと同じ方法で移動方向を決める
 		VECTOR vSpd{};
-		const float SHOT_SPEED = 5.0f;
 		vSpd.x = sinf(m_vRot.y) * -SHOT_SPEED;
 		vSpd.z = cosf(m_vRot.y) * -SHOT_SPEED;
 		vSpd.y = 0.0f;
@@ -260,19 +260,19 @@ void CPlayer::ExecDefault()
 	if (m_eState == PLAYER_STATE_WALK)
 	{
 		// 歩いている状態なら歩きモーションに
-		RequestLoop(ANIMID_WALK, 0.5f);
+		RequestLoop(ANIMID_WALK, PLAYER_ANIMATION_SPEED);
 	}
 	else if (m_eState == PLAYER_STATE_RUN) {
 		// 走っている状態なら走りモーションに
-		RequestLoop(ANIMID_RUN, 0.5f);
+		RequestLoop(ANIMID_RUN, PLAYER_ANIMATION_SPEED);
 	}
 	else if (Input::IsKeyPush(KEY_INPUT_1)) {
 		// 1キーを押すとぶらぶらする
-		RequestLoop(ANIMID_DANGLING, 0.5f);
+		RequestLoop(ANIMID_DANGLING, PLAYER_ANIMATION_SPEED);
 	}
 	else if (Input::IsKeyPush(KEY_INPUT_2)) {
 		// 上下にくねくね
-		RequestLoop(ANIMID_UPDOWN, 0.5f);
+		RequestLoop(ANIMID_UPDOWN, PLAYER_ANIMATION_SPEED);
 	}
 }
 
@@ -281,19 +281,19 @@ void CPlayer::ExecWalk()
 	if (m_eState == PLAYER_STATE_WAIT)
 	{
 		// 待機状態なら待機モーションに
-		RequestLoop(ANIMID_WAIT, 0.5f);
+		RequestLoop(ANIMID_WAIT, PLAYER_ANIMATION_SPEED);
 	}
 	else if (m_eState == PLAYER_STATE_RUN) {
 		// 走っている状態なら走りモーションに
-		RequestLoop(ANIMID_RUN, 0.5f);
+		RequestLoop(ANIMID_RUN, PLAYER_ANIMATION_SPEED);
 	}
 	else if (Input::IsKeyPush(KEY_INPUT_1)) {
 		// 1キーを押すとぶらぶらする
-		RequestLoop(ANIMID_DANGLING, 0.5f);
+		RequestLoop(ANIMID_DANGLING, PLAYER_ANIMATION_SPEED);
 	}
 	else if (Input::IsKeyPush(KEY_INPUT_2)) {
 		// 上下にくねくね
-		RequestLoop(ANIMID_UPDOWN, 0.5f);
+		RequestLoop(ANIMID_UPDOWN, PLAYER_ANIMATION_SPEED);
 	}
 }
 
@@ -302,19 +302,19 @@ void CPlayer::ExecRun()
 	if (m_eState == PLAYER_STATE_WAIT)
 	{
 		// 待機状態なら待機モーションに
-		RequestLoop(ANIMID_WAIT, 0.5f);
+		RequestLoop(ANIMID_WAIT, PLAYER_ANIMATION_SPEED);
 	}
 	else if (m_eState == PLAYER_STATE_WALK) {
 		// 歩いている状態なら歩きモーションに
-		RequestLoop(ANIMID_WALK, 0.5f);
+		RequestLoop(ANIMID_WALK, PLAYER_ANIMATION_SPEED);
 	}
 	else if (Input::IsKeyPush(KEY_INPUT_1)) {
 		// 1キーを押すとぶらぶらする
-		RequestLoop(ANIMID_DANGLING, 0.5f);
+		RequestLoop(ANIMID_DANGLING, PLAYER_ANIMATION_SPEED);
 	}
 	else if (Input::IsKeyPush(KEY_INPUT_2)) {
 		// 上下にくねくね
-		RequestLoop(ANIMID_UPDOWN, 0.5f);
+		RequestLoop(ANIMID_UPDOWN, PLAYER_ANIMATION_SPEED);
 	}
 }
 
@@ -322,7 +322,7 @@ void CPlayer::ExecWait()
 {
 	if (Input::IsKeyPush(KEY_INPUT_1)) {
 		// 1キーを押すと手を振る
-		RequestLoop(ANIMID_SHAKE, 0.5f);
+		RequestLoop(ANIMID_SHAKE, PLAYER_ANIMATION_SPEED);
 	}
 }
 
@@ -331,7 +331,7 @@ void CPlayer::ExecUpDown()
 	if (CModel::m_sAnimData.m_fFrm + 10.0f * CModel::m_sAnimData.m_fSpd >= CModel::m_sAnimData.m_fEndFrm) {
 		if (Input::IsKeyPush(KEY_INPUT_2)) {
 			// ダンス
-			RequestLoop(ANIMID_DANCE, 0.5f);
+			RequestLoop(ANIMID_DANCE, PLAYER_ANIMATION_SPEED);
 		}
 	}
 }
@@ -340,7 +340,7 @@ void CPlayer::ExecShake()
 {
 	if (Input::IsKeyPush(KEY_INPUT_1)) {
 		// 1キーを押すとピアノ
-		RequestLoop(ANIMID_PIANO, 0.5f);
+		RequestLoop(ANIMID_PIANO, PLAYER_ANIMATION_SPEED);
 	}
 }
 
@@ -348,7 +348,7 @@ void CPlayer::ExecPiano()
 {
 	if (Input::IsKeyPush(KEY_INPUT_1)) {
 		// ピアノ中に1キーを押すと待機モーションにに
-		RequestLoop(ANIMID_WAIT, 0.5f);
+		RequestLoop(ANIMID_WAIT, PLAYER_ANIMATION_SPEED);
 	}
 }
 
@@ -356,7 +356,7 @@ void CPlayer::ExecDance()
 {
 	if (Input::IsKeyPush(KEY_INPUT_2)) {
 		// ダンス中に2を押すと待機に
-		RequestLoop(ANIMID_WAIT, 0.5f);
+		RequestLoop(ANIMID_WAIT, PLAYER_ANIMATION_SPEED);
 	}
 }
 

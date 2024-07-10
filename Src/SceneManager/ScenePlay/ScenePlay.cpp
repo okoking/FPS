@@ -86,6 +86,8 @@ void ScenePlay::Step()
 	CollisionManager::CheckHitPlayerToBox(cPlayer, cMap);
 	// プレイヤーと敵の当たり判定
 	CollisionManager::CheckHitPlayerToEnemy(cPlayer, cEnemyManager);
+	// 球と箱の当たり判定
+	CollisionManager::CheckHitShotToBox(cShotManager, cMap);
 
 	//カメラ切り替え処理
 	if (Input::IsKeyPush(KEY_INPUT_C))

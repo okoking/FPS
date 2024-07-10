@@ -1,5 +1,5 @@
 #include "Shot.h"
-static const float RADIUS = 5.0f;
+constexpr float RADIUS = 5.0f;
 
 // コンストラクタ
 CShot::CShot()

@@ -1,6 +1,8 @@
 #pragma once
 #include "../Common.h"
 
+constexpr VECTOR SHOT_SIZE = { 5.0f,5.0f,5.0f };
+
 class CShot
 {
 private:
