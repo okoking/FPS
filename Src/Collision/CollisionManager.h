@@ -20,4 +20,8 @@ public:
 	// ƒvƒŒƒCƒ„[‚Æ“G‚Ì“–‚½‚è”»’è
 	static void CheckHitPlayerToEnemy(CPlayer& cPlayer,
 									  CEnemyManager& cEnemyManager);
+
+	// ‹…‚Æ” ‚Ì“–‚½‚è”»’è
+	static void CheckHitShotToBox(ShotManager& cShotManager,
+								  CMap cMap);
 };

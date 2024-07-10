@@ -1,10 +1,7 @@
 #pragma once
 #include "../Common.h"
 
-const int MAP_NUM = 10;
-
-const VECTOR MAP_SIZE = { 6.0f,6.0f,6.0f };
-const VECTOR MAP_INIT_POS = { 8.0f,MAP_SIZE.y / 2.0f,8.0f };
+constexpr int MAP_NUM = 10;
 
 class CMap {
 private:
