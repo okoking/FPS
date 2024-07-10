@@ -3,7 +3,7 @@
 constexpr float RADIUS = 4.0f;
 constexpr VECTOR ENEMY_SIZE = { 8.0f,50.0f,8.0f };
 constexpr VECTOR ENEMY_SPEED = { 0.0f,0.0f,-0.5f };
-constexpr float FLENGTH = 300.0f;
+constexpr float ENEMY_FLENGTH = 300.0f;
 CEnemy::CEnemy() {
 	memset(&vPos, 0, sizeof(VECTOR));
 	memset(&vSpd, 0, sizeof(VECTOR));
@@ -50,8 +50,8 @@ void CEnemy::Step(){
 
 	vPos = VAdd(vPos, vSpd);
 
-	if (vPos.x > FLENGTH || vPos.x < -FLENGTH
-		|| vPos.z > FLENGTH || vPos.z < -FLENGTH) {
+	if (vPos.x > ENEMY_FLENGTH || vPos.x < -ENEMY_FLENGTH
+		|| vPos.z > ENEMY_FLENGTH || vPos.z < -ENEMY_FLENGTH) {
 		isActive = false;
 	}
 
