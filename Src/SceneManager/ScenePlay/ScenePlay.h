@@ -14,7 +14,7 @@ private:
 	CCameraManager		cCameraManager;	// カメラマネージャー
 	CPlayer				cPlayer;		// プレイヤー処理
 	ShotManager			cShotManager;	// ショットマネージャー
-	CEnemyManager		cEnemyManger;	// エネミーマネージャー
+	CEnemyManager		cEnemyManager;	// エネミーマネージャー
 	CBackGround			cBackGround;	// 背景
 	CSky				cSky;			// 空
 	CMap				cMap;			// マップ

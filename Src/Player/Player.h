@@ -35,10 +35,6 @@ enum PlayerDirection {
 
 class CPlayer : public CModel
 {
-private:
-	StBox box[10];
-
-	void BoxCollision();
 public:
 	CPlayer();
 	~CPlayer();
@@ -80,7 +76,7 @@ public:
 	void SetisLanding(bool Flag) { isLanding = Flag; }
 
 	// Y軸角度取得
-	inline float GetRotateY() { return m_vRot.y; }
+	float GetRotateY() { return m_vRot.y; }
 	// 更新したデータを反映させる
 	void Update();
 	// 座標更新(NextPos代入)

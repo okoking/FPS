@@ -39,5 +39,5 @@ public:
 	// À•Wæ“¾
 	void GetPosition(VECTOR& vPos) { vPos = _vPos; }
 	//@”¼Œaæ“¾
-	float GetRadius() { return m_fRadius; }
+	void GetRadius(float& Rad) { Rad = m_fRadius; }
 };

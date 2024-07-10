@@ -35,7 +35,7 @@ public:
 	void Draw();
 
 	// ニアー、ファーをセット
-	void SetNearFar(float fNear, float fFar);
+	void SetNearFar();
 
 	// カメラタイプ変更
 	void ChangeCamera(tagCAMERA_ID ID);

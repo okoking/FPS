@@ -22,8 +22,8 @@ void CollisionManager::CheckHitShotToEnemy(CEnemyManager& cEnemyManager, ShotMan
 			VECTOR vShotPos, vEnemyPos;
 			float fShotRadius, fEnemyRadius;
 			cPlayerShot.GetPosition(vShotPos);
+			cPlayerShot.GetRadius(fShotRadius);
 			vEnemyPos = cEnemy.GetPosition();
-			fShotRadius = cPlayerShot.GetRadius();
 			fEnemyRadius = cEnemy.GetRadius();
 
 			// “G‚Ì‚Ù‚¤‚Í“–‚½‚è”»’è‚Ì’†S‚ğ”¼Œa•ª•‚‚©‚¹‚é

@@ -27,6 +27,7 @@ protected:
 	ANIM_DATA	m_sAnimData;	// アニメ再生関連データ
 	int			m_iHndl;		// モデルハンドル
 
+	bool		m_isActive;		// 生存フラグ
 public:
 	CModel();
 	virtual ~CModel();
@@ -48,6 +49,11 @@ public:
 	VECTOR GetSize() { return m_vSize; }
 	// サイズ代入用
 	void SetSize(VECTOR vSize) { m_vSize = vSize; }
+
+	// 生存フラグ取得
+	bool GetisActive() { return m_isActive; }
+	// 生存フラグセット
+	void SetisActive(bool isActive) { m_isActive = isActive; }
 
 	//*********************************************
 	// 画像読み込み関連

@@ -1,16 +1,18 @@
 #include "Model.h"
-#define VECTOR_ZERO	VGet(0.0f,0.0f,0.0f)
-#define VECTOR_ONE	VGet(1.0f,1.0f,1.0f)
+#include "../Common.h"
 
 CModel::CModel()
 {
 	memset(&m_vPos, 0, sizeof(VECTOR));
+	memset(&m_vSize, 0, sizeof(VECTOR));
 	memset(&m_vRot, 0, sizeof(VECTOR));
 	memset(&m_vScale, 0, sizeof(VECTOR));
 	ZeroMemory(&m_sAnimData, sizeof(m_sAnimData));
 	m_sAnimData.m_iHndl = -1;
 	m_sAnimData.m_iID = -1;
 	m_iHndl = -1;
+
+	m_isActive = false;
 }
 
 CModel::~CModel()
@@ -30,6 +32,8 @@ void CModel::Init()
 	ZeroMemory(&m_sAnimData, sizeof(m_sAnimData));
 	m_sAnimData.m_iHndl = -1;
 	m_sAnimData.m_iID = -1;
+
+	m_isActive = true;
 }
 
 // èIóπèàóù

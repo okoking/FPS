@@ -38,8 +38,6 @@ void CViewpoint::Step()
 	}
 
 	SetMousePoint(HALF_SCREEN_SIZE_X, HALF_SCREEN_SIZE_Y);
-
-	DrawFormatString(0, 0, WHITE, "%f", m_vRot.x);
 }
 
 void CViewpoint::SetRot(VECTOR Rot)

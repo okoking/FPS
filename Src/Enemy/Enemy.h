@@ -1,8 +1,8 @@
 #pragma once
 #include "../Common.h"
 
-constexpr float RADIUS = 5.0f;
-constexpr VECTOR ENEMY_SIZE = { 5.0f,5.0f,5.0f };
+constexpr float RADIUS = 4.0f;
+constexpr VECTOR ENEMY_SIZE = { 4.0f,4.0f,4.0f };
 
 class CEnemy {
 private:

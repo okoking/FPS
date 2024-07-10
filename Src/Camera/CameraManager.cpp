@@ -2,9 +2,12 @@
 
 // 定義
 // 基本となる視点・注視点。アップベクトル
-static const VECTOR DEFAULT_EYE_POS = { 0.0f, 10.0f, -20.0f };
-static const VECTOR DEFAULT_FORCUS_POS = { 0.0f, 0.0f, 0.0f };
-static const VECTOR DEFAULT_UP_VEC = { 0.0f, 1.0f, 0.0f };
+constexpr VECTOR DEFAULT_EYE_POS = { 0.0f, 10.0f, -20.0f };
+constexpr VECTOR DEFAULT_FORCUS_POS = { 0.0f, 0.0f, 0.0f };
+constexpr VECTOR DEFAULT_UP_VEC = { 0.0f, 1.0f, 0.0f };
+
+constexpr float CAMERA_NEAR = 5.0f;
+constexpr float CAMERA_FAR = 2000.0f;
 
 // コンストラクタ
 CCameraManager::CCameraManager()
@@ -62,8 +65,8 @@ void CCameraManager::Draw() {
 }
 
 // ニアー、ファーをセット
-void CCameraManager::SetNearFar(float fNear, float fFar) {
-	SetCameraNearFar(fNear, fFar);
+void CCameraManager::SetNearFar() {
+	SetCameraNearFar(CAMERA_NEAR, CAMERA_FAR);
 }
 
 // カメラタイプ変更

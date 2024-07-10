@@ -1,7 +1,7 @@
 #include "Sky.h"
 const	char	SKY_PATH[256]	=	"Data/Sky/Sky.x";
-const	VECTOR	SKY_INIT_POS	=	{ 0.0f, 0.0f, 0.0f };
-const	VECTOR	SKY_INIT_SCALE	=	{ 1.0f, 1.0f, 1.0f };
+const	VECTOR	SKY_INIT_POS	=	{ 0.0f, 0.0f, 600.0f };
+const	VECTOR	SKY_INIT_SCALE	=	{ 5.0f, 5.0f, 5.0f };
 
 // コンストラクタ
 CSky::CSky()

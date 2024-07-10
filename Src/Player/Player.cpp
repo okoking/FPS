@@ -23,88 +23,6 @@ const VECTOR PLAYER_SIZE = { 8.0f,20.0f,8.0f };
 const float GRAVITY = 0.15f;
 const float JUMP_POWER = 2.5f;
 
-void CPlayer::BoxCollision()
-{
-	//VECTOR m_CentervPos = m_vPos;
-	//m_CentervPos.y += BOX_SIZE.y / 2.0f;
-
-	//VECTOR m_CentervNextPos = m_vNextPos;
-	//m_CentervNextPos.y += BOX_SIZE.y / 2.0f;
-
-	//VECTOR AvSize = m_vSize;
-
-	//// 上下の当たり判定
-	//for (int BoxIndex = 0; BoxIndex < 10; BoxIndex++) {
-	//	if (Collision::IsHitRect3D(VGet(m_CentervPos.x, m_CentervNextPos.y, m_CentervPos.z), AvSize, box[BoxIndex].m_vPos, box[BoxIndex].m_vSize)) {
-	//		bool dirArray[6] = { false,false,false,false,false,false };
-	//		GetMoveDirection(dirArray);
-	//		if (dirArray[0]) {
-	//			// 上のめり込み量の計算
-	//			float calc = (m_CentervNextPos.y + AvSize.y / 2.0f) - (box[BoxIndex].m_vPos.y - box[BoxIndex].m_vSize.y / 2.0f);
-	//			m_vNextPos.y -= calc;
-
-	//			// 頭をぶつけたのでスピードを調整
-	//			m_vSpeed.y = 0.0f;
-	//		}
-	//		if (dirArray[1]) {
-	//			// 下のめり込み量の計算
-	//			float calc = (box[BoxIndex].m_vPos.y + box[BoxIndex].m_vSize.y / 2.0f) - (m_CentervNextPos.y - AvSize.y / 2.0f);
-	//			m_vNextPos.y += calc;
-	//			// 着地している判定に
-	//			isLanding = true;
-	//		}
-	//		m_CentervNextPos = m_vNextPos;
-	//		m_CentervNextPos.y += BOX_SIZE.y / 2.0f;
-	//	}
-	//}
-
-	//for (int BoxIndex = 0; BoxIndex < 10; BoxIndex++) {
-	//	// 左右の当たり判定
-	//	if (Collision::IsHitRect3D(VGet(m_CentervNextPos.x, m_CentervNextPos.y, m_CentervPos.z), AvSize, box[BoxIndex].m_vPos, box[BoxIndex].m_vSize)) {
-	//		bool dirArray[6] = { false,false,false,false,false,false };
-	//		GetMoveDirection(dirArray);
-	//		if (dirArray[2]) {
-	//			// 左のめり込み量の計算
-	//			float calc = (box[BoxIndex].m_vPos.x + box[BoxIndex].m_vSize.x / 2.0f) - (m_CentervNextPos.x - AvSize.x / 2.0f);
-	//			m_vNextPos.x += calc;
-	//		}
-	//		if (dirArray[3]) {
-	//			// 右のめり込み量の計算
-	//			float calc = (m_CentervNextPos.x + AvSize.x / 2.0f) - (box[BoxIndex].m_vPos.x - box[BoxIndex].m_vSize.x / 2.0f);
-	//			m_vNextPos.x -= calc;
-	//		}
-	//	}
-	//	m_CentervNextPos = m_vNextPos;
-	//	m_CentervNextPos.y += BOX_SIZE.y / 2.0f;
-	//}
-
-	//for (int BoxIndex = 0; BoxIndex < 10; BoxIndex++) {
-	//	// 奥前の当たり判定
-	//	if (Collision::IsHitRect3D(VGet(m_CentervNextPos.x, m_CentervNextPos.y, m_CentervNextPos.z), AvSize, box[BoxIndex].m_vPos, box[BoxIndex].m_vSize)) {
-	//		bool dirArray[6] = { false,false,false,false,false,false };
-	//		GetMoveDirection(dirArray);
-	//		if (dirArray[4]) {
-	//			// 奥のめり込み量の計算
-	//			float calc = (m_CentervNextPos.z + AvSize.z / 2.0f) - (box[BoxIndex].m_vPos.z - box[BoxIndex].m_vSize.z / 2.0f);
-	//			m_vNextPos.z -= calc;
-	//		}
-	//		if (dirArray[5]) {
-	//			// 前のめり込み量の計算
-	//			float calc = (box[BoxIndex].m_vPos.z + box[BoxIndex].m_vSize.z / 2.0f) - (m_CentervNextPos.z - AvSize.z / 2.0f);
-	//			m_vNextPos.z += calc;
-	//		}
-	//	}
-	//	m_CentervNextPos = m_vNextPos;
-	//	m_CentervNextPos.y += BOX_SIZE.y / 2.0f;
-	//}
-
-	// カメラの移動
-	CameraForcuMovement();
-
-	// 座標更新
-	UpdataPos();
-}
-
 // コンストラクタ
 CPlayer::CPlayer() {
 	memset(&m_vPos, 0, sizeof(VECTOR));
@@ -116,9 +34,6 @@ CPlayer::CPlayer() {
 	m_iHndl = -1;
 	isLanding = false;
 	m_Dir = DIR_TOP;
-
-	memset(&CPlayer::box->m_vPos, 0, sizeof(VECTOR));
-	memset(&CPlayer::box->m_vSize, 0, sizeof(VECTOR));
 }
 
 // デストラクタ
