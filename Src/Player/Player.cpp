@@ -68,7 +68,7 @@ void CPlayer::Draw()
 	VECTOR Pos = m_vPos;
 	Pos.y += m_vSize.y / 2.0f;
 
-	Draw3D::Draw3DBox(Pos, m_vSize, true);
+	//Draw3D::Draw3DBox(Pos, m_vSize, true);
 	CModel::Draw();
 }
 

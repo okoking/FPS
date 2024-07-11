@@ -1,6 +1,6 @@
 #include "Enemy.h"
 #include "../Sound/SoundManager.h"
-constexpr float		RADIUS				= 2.0f;
+constexpr float		RADIUS				= 3.0f;
 constexpr VECTOR	ENEMY_SIZE			= { 8.0f,50.0f,8.0f };
 constexpr VECTOR	ENEMY_SPEED			= { 0.0f,0.0f,-0.5f };
 constexpr float		ENEMY_FLENGTH		= 300.0f;
@@ -44,7 +44,7 @@ void CEnemy::Draw() {
 		MV1DrawModel(Handle);
 #ifndef MY_DEBUG
 		VECTOR CorePos = vCorePos;
-		CorePos.z -= 1.0f;
+		CorePos.z -= 5.0f;
 		DrawSphere3D(CorePos, radius, SPHERE_DIV_NUM, RED, RED, true);
 #endif // !MY_DEBUG
 	}

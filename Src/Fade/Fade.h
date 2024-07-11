@@ -25,6 +25,9 @@ public:
 	// フェード終了フラグを取得
 	static bool GetIsEndFlag();
 
+	// フェード終了フラグをセット
+	static void SetIsEndFlag(bool Flag) { m_bIsEndFlag = Flag; }
+
 private:
 	// 現在の状態
 	static tagFadeState m_eState;
