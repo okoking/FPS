@@ -6,6 +6,8 @@
 
 void SceneTitle::Init()
 {
+	// フェードのフラグを変更
+	CFade::GetIsEndFlag();
 }
 void SceneTitle::Step()
 {

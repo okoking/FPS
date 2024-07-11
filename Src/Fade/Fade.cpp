@@ -6,10 +6,10 @@ int CFade::m_iAlpha = 0;
 int CFade::m_iAddAlpha = 0;
 
 // アルファ値の最大値
-#define ALPHA_MAX 255
+constexpr int ALPHA_MAX = 255;
 
 // アルファ値の最小値
-#define ALPHA_MIN 0
+constexpr int ALPHA_MIN = 0;
 
 // コンストラクタ・デストラクタ
 CFade::CFade() {}

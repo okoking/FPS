@@ -76,7 +76,7 @@ public:
 	// 更新したデータを反映させる
 	void Update();
 	// 座標更新(NextPos代入)
-	void UpdataPos() { m_vPos = m_vNextPos; }
+	void UpdatePos() { m_vPos = m_vNextPos; }
 
 	// 注視点取得用
 	VECTOR GetCameraForcusPos(){ return m_CameraForcusPos; }

@@ -6,11 +6,11 @@ constexpr VECTOR SHOT_SIZE = { 5.0f,5.0f,5.0f };
 class CShot
 {
 private:
-	VECTOR _vPos;	// 座標
-	VECTOR _vSpeed;	// 移動速度
-	float m_fRadius;			// 半径
-	int _iHndl;		// モデルハンドル
-	bool _isActive;	// 生存フラグ
+	VECTOR	_vPos;		// 座標
+	VECTOR	_vSpeed;	// 移動速度
+	float	m_fRadius;	// 半径
+	int		_iHndl;		// モデルハンドル
+	bool	_isActive;	// 生存フラグ
 
 public:
 	// コンストラクタ・デストラクタ
@@ -35,11 +35,11 @@ public:
 	//	@return	:	true=リクエスト成功　false=失敗
 	bool RequestShot(const VECTOR& vPos, const VECTOR& vSpeed);
 	// 生存判定
-	//	@return	:	true=生存 false=脂肪
+	//	@return	:	true=生存 false=死亡
 	bool IsActive() { return _isActive; }
 	void HitCalc() { _isActive = false; }
 	// 座標取得
-	void GetPos(VECTOR& vPos) { vPos = _vPos; }
+	VECTOR GetPos() { return _vPos; }
 	//　半径取得
-	void GetRadius(float& Rad) { Rad = m_fRadius; }
+	float GetRadius() { return m_fRadius; }
 };

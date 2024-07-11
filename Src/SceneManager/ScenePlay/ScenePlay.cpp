@@ -42,6 +42,7 @@ void ScenePlay::Init()
 
 void ScenePlay::Step()
 {
+	// マウスでの視点移動の制限
 	if (Input::Key::Release(KEY_INPUT_LCONTROL)) {
 		// マウスポインタの表示を消す
 		SetMouseDispFlag(FALSE);

@@ -3,12 +3,13 @@
 
 class CEnemy {
 private:
-	VECTOR vPos;	//座標
-	VECTOR vSpd;	//速度
-	VECTOR vSize;	//サイズ
-	float radius;	//半径
-	int	   Handle;	//ハンドル
-	bool   isActive;//生存フラグ
+	VECTOR	vPos;		//座標
+	VECTOR	vSpd;		//速度
+	VECTOR	vSize;		//サイズ
+	VECTOR	vCorePos;	//当たり判定の座標
+	float	radius;		//半径
+	int		Handle;		//ハンドル
+	bool	isActive;	//生存フラグ
 
 public:
 	CEnemy();
@@ -31,9 +32,10 @@ public:
 	float GetRadius() { return radius; }
 	//サイズを取得
 	VECTOR GetSize() { return vSize; }
+	// 当たり判定の座標
+	VECTOR GetCorePos() { return vCorePos; }
 	// 座標をセット
 	void SetPosition(VECTOR _vPos) { vPos = _vPos; }
-
 	// リクエスト
 	bool RequestEnemy(const VECTOR& pos, const VECTOR& spd);
 

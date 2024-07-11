@@ -19,18 +19,15 @@ void CollisionManager::CheckHitShotToEnemy(CEnemyManager& cEnemyManager, ShotMan
 			if (!cEnemy.IsActive())continue;
 
 			// 座標と半径を取得
-			VECTOR vShotPos, vEnemyPos;
+			VECTOR vShotPos, vEnemyCorePos;
 			float fShotRadius, fEnemyRadius;
-			cPlayerShot.GetPos(vShotPos);
-			cPlayerShot.GetRadius(fShotRadius);
-			vEnemyPos = cEnemy.GetPos();
+			vShotPos = cPlayerShot.GetPos();
+			fShotRadius = cPlayerShot.GetRadius();
+			vEnemyCorePos = cEnemy.GetCorePos();
 			fEnemyRadius = cEnemy.GetRadius();
 
-			// 敵のほうは当たり判定の中心を半径分浮かせる
-			vEnemyPos.y += fEnemyRadius;
-
 			// 球と球の当たり判定
-			if (Collision::IsHitCircle3D(vShotPos, fShotRadius, vEnemyPos, fEnemyRadius))
+			if (Collision::IsHitCircle3D(vShotPos, fShotRadius, vEnemyCorePos, fEnemyRadius))
 			{
 				// ここまでくれば当たっている
 				cPlayerShot.HitCalc();
@@ -120,7 +117,7 @@ void CollisionManager::CheckHitPlayerToBox(CPlayer& cPlayer, CMap cMap)
 	cPlayer.CameraForcuMovement();
 
 	// 座標更新
-	cPlayer.UpdataPos();
+	cPlayer.UpdatePos();
 }
 
 // プレイヤーと敵の当たり判定
@@ -168,7 +165,7 @@ void CollisionManager::CheckHitShotToBox(ShotManager& cShotManager, CMap cMap)
 				VECTOR vMapPos, vMapSize;
 
 				// 球の座標
-				cPlayerShot.GetPos(vShotPos);
+				vShotPos = cPlayerShot.GetPos();
 
 				// 箱の座標
 				vMapPos = itr->GetPos();

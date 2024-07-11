@@ -1,13 +1,18 @@
 #include "Enemy.h"
 #include "../Sound/SoundManager.h"
-constexpr float RADIUS = 4.0f;
-constexpr VECTOR ENEMY_SIZE = { 8.0f,50.0f,8.0f };
-constexpr VECTOR ENEMY_SPEED = { 0.0f,0.0f,-0.5f };
-constexpr float ENEMY_FLENGTH = 300.0f;
+constexpr float		RADIUS				= 2.0f;
+constexpr VECTOR	ENEMY_SIZE			= { 8.0f,50.0f,8.0f };
+constexpr VECTOR	ENEMY_SPEED			= { 0.0f,0.0f,-0.5f };
+constexpr float		ENEMY_FLENGTH		= 300.0f;
+constexpr int		COREPOS_RAND_RANGE	= 50.0f - RADIUS * 2.0f;
+constexpr int		SPHERE_DIV_NUM		= 16;
+constexpr VECTOR	ENEMY_SCALE			= { 5.0f,5.0f,5.0f };
+
 CEnemy::CEnemy() {
 	memset(&vPos, 0, sizeof(VECTOR));
 	memset(&vSpd, 0, sizeof(VECTOR));
 	memset(&vSize, 0, sizeof(VECTOR));
+	memset(&vCorePos, 0, sizeof(VECTOR));
 	radius = 0.0f;
 	Handle = -1;
 	isActive = false;
@@ -22,6 +27,7 @@ void CEnemy::Init() {
 	vSpd = ENEMY_SPEED;
 	radius = RADIUS;
 	vSize = ENEMY_SIZE;
+	vCorePos = vPos;
 	Handle = -1;
 	isActive = false;
 }
@@ -29,7 +35,7 @@ void CEnemy::Init() {
 void CEnemy::Load(int handle) {
 	if (Handle == -1) {
 		Handle = MV1DuplicateModel(handle);
-		MV1SetScale(Handle, VGet(5.0f, 5.0f, 5.0f));
+		MV1SetScale(Handle, ENEMY_SCALE);
 	}
 }
 
@@ -37,10 +43,9 @@ void CEnemy::Draw() {
 	if (isActive) {
 		MV1DrawModel(Handle);
 #ifndef MY_DEBUG
-		VECTOR Pos = vPos;
-		Pos.y += radius;
-		DrawSphere3D(Pos, radius, 16, GetColor(255, 255, 255), GetColor(255, 255, 255), true);
-
+		VECTOR CorePos = vCorePos;
+		CorePos.z -= 1.0f;
+		DrawSphere3D(CorePos, radius, SPHERE_DIV_NUM, RED, RED, true);
 #endif // !MY_DEBUG
 	}
 }
@@ -48,7 +53,11 @@ void CEnemy::Draw() {
 void CEnemy::Step(){
 	if (!isActive) return;
 
+	// 敵の座標の更新
 	vPos = VAdd(vPos, vSpd);
+
+	// 当たり判定の座標の計算
+	vCorePos = VAdd(vCorePos, vSpd);
 
 	if (vPos.x > ENEMY_FLENGTH || vPos.x < -ENEMY_FLENGTH
 		|| vPos.z > ENEMY_FLENGTH || vPos.z < -ENEMY_FLENGTH) {
@@ -76,6 +85,8 @@ bool CEnemy::RequestEnemy(const VECTOR& pos, const VECTOR& spd) {
 	vPos = pos;
 	vSpd = spd;
 	isActive = true;
+	vCorePos = vPos;
+	vCorePos.y = static_cast<float>(GetRand(COREPOS_RAND_RANGE));
 
 	//更新
 	MV1SetPosition(Handle, vPos);
