@@ -5,8 +5,8 @@
 #include "list"
 
 using namespace std;
-const VECTOR VECTOR_ZERO = VGet(0.0f, 0.0f, 0.0f);
-const VECTOR VECTOR_ONE	= VGet(1.0f, 1.0f, 1.0f);
+constexpr VECTOR VECTOR_ZERO = { 0.0f, 0.0f, 0.0f };
+constexpr VECTOR VECTOR_ONE = { 1.0f, 1.0f, 1.0f };
 
 // いろいろな色
 const int WHITE = GetColor(255, 255, 255);
@@ -28,9 +28,6 @@ constexpr float CALC_ANGLE = DX_PI_F / 180.0f;
 
 // フェードの速度
 constexpr int FADE_SPEED = 8;
-
-// デフォルトフォントサイズ
-constexpr int DEFAULT_FONTSIZE = 16;
 
 void InitGame();
 void StepGame();

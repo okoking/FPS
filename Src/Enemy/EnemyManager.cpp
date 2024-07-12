@@ -65,9 +65,12 @@ void CEnemyManager::Step()
 
 	// 敵の出現
 	m_iWaitCnt--;
+	// 待機時間が過ぎる、もしくは敵が1人も出てきていないなら
 	if (m_iWaitCnt < 0 || iEnemyCnt == 0)
 	{
+		// 召喚
 		RequestEnemy();
+		// カウントリセット
 		m_iWaitCnt = WAIT_TIME;
 	}
 }
@@ -82,8 +85,22 @@ void CEnemyManager::Draw()
 		// 敵の座標サイズの半分上に表示
 		EnemyPos = m_cEnemy[i].GetPos();
 		EnemyPos.y += m_cEnemy[i].GetSize().y / 2.0f;
-		Draw3D::Draw3DBox(EnemyPos, m_cEnemy[i].GetSize());
+
 		m_cEnemy[i].Draw();
+	}
+}
+
+// デバッグ表示
+void CEnemyManager::DebugDraw()
+{
+	VECTOR EnemyPos;
+	for (int i = 0; i < m_cEnemy.size(); i++) {
+		if (!m_cEnemy[i].IsActive())continue;
+
+		// 敵の座標サイズの半分上に表示
+		EnemyPos = m_cEnemy[i].GetPos();
+		EnemyPos.y += m_cEnemy[i].GetSize().y / 2.0f;
+		Draw3D::Draw3DBox(EnemyPos, m_cEnemy[i].GetSize());
 	}
 }
 

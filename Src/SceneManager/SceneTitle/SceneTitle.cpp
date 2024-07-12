@@ -3,11 +3,17 @@
 #include "../../Common.h"
 #include "../../Input/Input.h"
 #include "../../Fade/Fade.h"
+constexpr char TITLE_PATH[] = { "Data/Title/Title.png " };
 
 void SceneTitle::Init()
 {
 	// フェードのフラグを変更
-	CFade::GetIsEndFlag();
+	CFade::SettagFadeState(CFade::STATE_FADE_NONE);
+	// 透過値リセット
+	CFade::SetiAlpha();
+
+	// 画像ロード
+	_Hndl = LoadGraph(TITLE_PATH);
 }
 void SceneTitle::Step()
 {
@@ -21,9 +27,10 @@ void SceneTitle::Step()
 }
 void SceneTitle::Draw()
 {
-	DrawFormatString(0, 0, WHITE, "タイトル画面です。");
-	DrawFormatString(0, DEFAULT_FONTSIZE, WHITE, "エンターキーでプレイシーンに行きます。");
+	DrawGraph(0, 0, _Hndl, true);
 }
 void SceneTitle::Fin()
 {
+	//フェードアウト
+	CFade::StartFade(CFade::STATE_FADE_OUT, FADE_SPEED);
 }

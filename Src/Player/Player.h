@@ -44,6 +44,9 @@ public:
 	// 描画
 	void Draw();
 
+	// デバッグ描画
+	void DebugDraw();
+
 	// 毎フレーム実行する処理
 	void Step(ShotManager& cShotManager);
 
@@ -83,6 +86,7 @@ public:
 
 	// 移動している方向取得(上下左右奥前)
 	void GetMoveDirection(bool* _dirArray);
+
 private:
 	enum tagPlayerState {
 		PLAYER_STATE_WAIT,		// 待機中
@@ -102,7 +106,6 @@ private:
 
 	// プレイヤー移動処理
 	void Moving();
-
 	// 球発射処理
 	void Shooting(ShotManager& cShotManager);
 

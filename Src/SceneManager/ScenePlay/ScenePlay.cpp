@@ -7,6 +7,8 @@
 
 void ScenePlay::Init()
 {
+	// マウスポインタの表示を消す
+	SetMouseDispFlag(FALSE);
 	// 視点移動初期化
 	CViewpoint::Init();
 	//背景初期化
@@ -26,6 +28,8 @@ void ScenePlay::Init()
 	cMap.Init();
 	//時止めフラグ初期化
 	isTimeStop = false;
+	//デバッグフラグ
+	isDebug = false;
 	//背景ロード
 	cBackGround.Load();
 	//空ロード
@@ -36,8 +40,6 @@ void ScenePlay::Init()
 	cShotManager.Load();
 	//敵ロード
 	cEnemyManager.Load();
-	//フェードアウト
-	CFade::StartFade(CFade::STATE_FADE_OUT, FADE_SPEED);
 }
 
 void ScenePlay::Step()
@@ -102,6 +104,14 @@ void ScenePlay::Step()
 	//エンターキー入力でクリア画面へ
 	if (Input::Key::Push(KEY_INPUT_RETURN))
 		SceneBace::g_scene_ID = Clear_Scene;
+
+	// Oキー入力でデバッグ表示切替
+	if (Input::Key::Push(KEY_INPUT_O)) {
+		if (isDebug)
+			isDebug = false;
+		else
+			isDebug = true;
+	}
 }
 void ScenePlay::Draw()
 {
@@ -112,6 +122,10 @@ void ScenePlay::Draw()
 	cEnemyManager.Draw();
 	cCameraManager.Draw();
 	cMap.Draw();
+
+	// デバッグ用表示
+	if (isDebug)
+		DegugDraw();
 }
 void ScenePlay::Fin()
 {
@@ -121,4 +135,11 @@ void ScenePlay::Fin()
 	cShotManager.Exit();
 	cEnemyManager.Exit();
 	cCameraManager.Exit();
+}
+
+// デバッグ用表示
+void ScenePlay::DegugDraw()
+{
+	cEnemyManager.DebugDraw();
+	cPlayer.DebugDraw();
 }

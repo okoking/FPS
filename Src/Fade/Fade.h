@@ -28,6 +28,12 @@ public:
 	// フェード終了フラグをセット
 	static void SetIsEndFlag(bool Flag) { m_bIsEndFlag = Flag; }
 
+	// ステータスをセット
+	static void SettagFadeState(tagFadeState fadeState) { m_eState = fadeState; }
+
+	// 透過値をセット
+	static void SetiAlpha(int Alpha = 0) { m_iAlpha = Alpha; }
+
 private:
 	// 現在の状態
 	static tagFadeState m_eState;

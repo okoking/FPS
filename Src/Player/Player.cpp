@@ -8,22 +8,21 @@
 
 // 定義関連
 constexpr char PLAYER_MODEL_PATH[] =
-		{ "Data/Model/char/char.pmd" };	// ロードするファイル名
-constexpr float ROTATE_SPEED = 0.1f;		// プレイヤーの回転速度
-constexpr float MOVE_SPEED = 0.5f;			// プレイヤーの移動速度
-constexpr float DASH_SPEED = 1.5f;			// 走るスピード
-constexpr float FORCUS_SPEED_MAG = 3.0f;	// ジャンプ時の注視点の移動速度倍率
-constexpr float FORCUS_SPEED = -2.0f;		// ジャンプ時の注視点の最高移動速度
-constexpr float FORCUS_DISSPEED = -2.5f;	// ジャンプ時の注視点の下限移動速度
+		{ "Data/Model/char/char.pmd" };				// ロードするファイル名
+constexpr float ROTATE_SPEED = 0.1f;				// プレイヤーの回転速度
+constexpr float MOVE_SPEED = 0.5f;					// プレイヤーの移動速度
+constexpr float DASH_SPEED = 1.5f;					// 走るスピード
+constexpr float FORCUS_SPEED_MAG = 3.0f;			// ジャンプ時の注視点の移動速度倍率
+constexpr float FORCUS_SPEED = -2.0f;				// ジャンプ時の注視点の最高移動速度
+constexpr float FORCUS_DISSPEED = -2.5f;			// ジャンプ時の注視点の下限移動速度
 constexpr VECTOR PLAYER_SIZE = { 8.0f,20.0f,8.0f };	// プレイヤーのサイズ
 constexpr float SHOT_SPEED = 5.0f;					// 球のスピード
-constexpr float SHOT_POS_HEIGHT = 10.0f;			// 球の発射される高さ
+constexpr float SHOT_POS_HEIGHT = 8.0f;				// 球の発射される高さ
 constexpr float PLAYER_ANIMATION_SPEED = 0.5f;		// アニメーションの再生速度
 constexpr float PLAYER_DIR_MAG = 45.0f;				// プレイヤーの向き（倍率）
-// 重力
-constexpr float GRAVITY = 0.15f;
-constexpr float JUMP_POWER = 2.5f;
-
+constexpr float GRAVITY = 0.15f;					// 重力
+constexpr float JUMP_POWER = 2.5f;					// ジャンプ力
+constexpr float DANCE_INPUT_GRACE = 10.0f;			// ダンスできるまでの入力猶予
 // コンストラクタ
 CPlayer::CPlayer() {
 	memset(&m_vPos, 0, sizeof(VECTOR));
@@ -68,8 +67,17 @@ void CPlayer::Draw()
 	VECTOR Pos = m_vPos;
 	Pos.y += m_vSize.y / 2.0f;
 
-	//Draw3D::Draw3DBox(Pos, m_vSize, true);
 	CModel::Draw();
+}
+
+// デバッグ描画
+void CPlayer::DebugDraw()
+{
+	VECTOR Pos = m_vPos;
+	Pos.y += m_vSize.y / 2.0f;
+
+	Draw3D::Draw3DBox(Pos, m_vSize, true);
+
 }
 
 // 毎フレーム実行する処理
@@ -87,14 +95,17 @@ void CPlayer::Step(ShotManager& cShotManager) {
 void CPlayer::CameraForcuMovement()
 {
 	// 視点移動のあれこれ
+	// 着地しているとき
 	if (isLanding) {
 		m_vSpeed.y = 0.0f;
+		// 注視点がプレイヤーより高い場所にあるとき
 		if (m_CameraForcusPos.y > m_vNextPos.y) {
 			m_CameraForcusPos.y += FORCUS_SPEED;
 			if (m_CameraForcusPos.y < m_vNextPos.y) {
 				m_CameraForcusPos.y = m_vNextPos.y;
 			}
 		}
+		// 注視点がプレイヤーより低い場所にあるとき
 		else if (m_CameraForcusPos.y < m_vNextPos.y) {
 			m_CameraForcusPos.y -= FORCUS_SPEED;
 			if (m_CameraForcusPos.y > m_vNextPos.y) {
@@ -102,6 +113,7 @@ void CPlayer::CameraForcuMovement()
 			}
 		}
 	}
+	// 空中にいるとき
 	else {
 		if (m_vSpeed.y < FORCUS_DISSPEED)
 			m_CameraForcusPos.y = m_vNextPos.y;
@@ -133,6 +145,8 @@ void CPlayer::Moving()
 
 	VECTOR vRot = { 0.0f,0.0f,0.0f };
 
+	//==================================================================
+	// 移動キー
 	if (Input::Key::Down(KEY_INPUT_W)) {
 		if (Input::Key::Down(KEY_INPUT_A)) {
 			m_Dir = DIR_TOPLEFT;
@@ -194,6 +208,7 @@ void CPlayer::Moving()
 		Input::Key::Down(KEY_INPUT_D) ) {
 		fSpd = MoveSpeed;
 	}
+	//==================================================================
 
 	m_eState = PLAYER_STATE_WAIT;
 
@@ -213,14 +228,6 @@ void CPlayer::Moving()
 
 	m_vNextPos.y += m_vSpeed.y;
 
-	isLanding = false;
-
-	// 地面との当たり判定
-	if (m_vNextPos.y < 0.0f) {
-		m_vNextPos.y = 0.0f;
-		isLanding = true;
-	}
-
 	// ==================================================
 	
 	// 入力したキー情報とプレイヤーの角度から、移動速度を求める
@@ -238,6 +245,8 @@ void CPlayer::Moving()
 // 球発射処理
 void CPlayer::Shooting(ShotManager& cShotManager)
 {
+	if (!isLanding) return;
+
 	// Zキーで球を発射
 	if (Input::Mouse::Down(MOUSE_INPUT_LEFT)) {
 		// プレイヤーの角度を変更
@@ -260,8 +269,7 @@ void CPlayer::ExecDefault()
 {
 	// 以下待機中に実行できる処理
 	// 優先順位に注意！！
-	if (m_eState == PLAYER_STATE_WALK)
-	{
+	if (m_eState == PLAYER_STATE_WALK) {
 		// 歩いている状態なら歩きモーションに
 		RequestLoop(ANIMID_WALK, PLAYER_ANIMATION_SPEED);
 	}
@@ -281,8 +289,7 @@ void CPlayer::ExecDefault()
 
 void CPlayer::ExecWalk()
 {
-	if (m_eState == PLAYER_STATE_WAIT)
-	{
+	if (m_eState == PLAYER_STATE_WAIT) {
 		// 待機状態なら待機モーションに
 		RequestLoop(ANIMID_WAIT, PLAYER_ANIMATION_SPEED);
 	}
@@ -302,8 +309,7 @@ void CPlayer::ExecWalk()
 
 void CPlayer::ExecRun()
 {
-	if (m_eState == PLAYER_STATE_WAIT)
-	{
+	if (m_eState == PLAYER_STATE_WAIT) {
 		// 待機状態なら待機モーションに
 		RequestLoop(ANIMID_WAIT, PLAYER_ANIMATION_SPEED);
 	}
@@ -331,7 +337,8 @@ void CPlayer::ExecWait()
 
 void CPlayer::ExecUpDown()
 {
-	if (CModel::m_sAnimData.m_fFrm + 10.0f * CModel::m_sAnimData.m_fSpd >= CModel::m_sAnimData.m_fEndFrm) {
+	// ループする10fいないに入力でダンスする
+	if (CModel::m_sAnimData.m_fFrm + DANCE_INPUT_GRACE * CModel::m_sAnimData.m_fSpd >= CModel::m_sAnimData.m_fEndFrm) {
 		if (Input::Key::Push(KEY_INPUT_2)) {
 			// ダンス
 			RequestLoop(ANIMID_DANCE, PLAYER_ANIMATION_SPEED);

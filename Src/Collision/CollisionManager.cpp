@@ -48,6 +48,8 @@ void CollisionManager::CheckHitPlayerToBox(CPlayer& cPlayer, CMap cMap)
 
 	VECTOR AvSize = cPlayer.GetSize();
 
+	cPlayer.SetisLanding(false);
+
 	// ã‰º‚Ì“–‚½‚è”»’è
 	for (auto itr = cMap.GetMapInfo().begin(); itr != cMap.GetMapInfo().end(); ++itr) {
 		if (Collision::IsHitRect3D(VGet(m_CentervPos.x, m_CentervNextPos.y, m_CentervPos.z), AvSize, itr->GetPos(), itr->GetSize())) {
@@ -113,6 +115,7 @@ void CollisionManager::CheckHitPlayerToBox(CPlayer& cPlayer, CMap cMap)
 		m_CentervNextPos.y += cPlayer.GetSize().y / 2.0f;
 	}
 	
+
 	// ƒJƒƒ‰‚ÌˆÚ“®
 	cPlayer.CameraForcuMovement();
 

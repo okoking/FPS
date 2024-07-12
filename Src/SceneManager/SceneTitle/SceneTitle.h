@@ -8,4 +8,6 @@ public:
 	void Step();
 	void Draw();
 	void Fin();
+private:
+	int	_Hndl;
 };

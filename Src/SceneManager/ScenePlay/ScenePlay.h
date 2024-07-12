@@ -20,10 +20,12 @@ private:
 	CMap				cMap;			// マップ
 
 	bool				isTimeStop;		// 時止めフラグ
-
+	bool				isDebug;		// デバッグフラグ
 public:
 	void Init();
 	void Step();
 	void Draw();
 	void Fin();
+
+	void DegugDraw();
 };

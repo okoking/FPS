@@ -15,7 +15,7 @@ void SceneClear::Step()
 void SceneClear::Draw()
 {
 	DrawFormatString(0, 0, WHITE, "リザルト画面です。");
-	DrawFormatString(0, DEFAULT_FONTSIZE, WHITE, "エンターキーでタイトルシーンに行きます。");
+	DrawFormatString(0, DEFAULT_FONT_SIZE, WHITE, "エンターキーでタイトルシーンに行きます。");
 }
 void SceneClear::Fin()
 {

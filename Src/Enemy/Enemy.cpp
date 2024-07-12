@@ -1,12 +1,13 @@
 #include "Enemy.h"
 #include "../Sound/SoundManager.h"
-constexpr float		RADIUS				= 3.0f;
-constexpr VECTOR	ENEMY_SIZE			= { 8.0f,50.0f,8.0f };
-constexpr VECTOR	ENEMY_SPEED			= { 0.0f,0.0f,-0.5f };
-constexpr float		ENEMY_FLENGTH		= 300.0f;
-constexpr int		COREPOS_RAND_RANGE	= 50.0f - RADIUS * 2.0f;
-constexpr int		SPHERE_DIV_NUM		= 16;
-constexpr VECTOR	ENEMY_SCALE			= { 5.0f,5.0f,5.0f };
+constexpr float		RADIUS				= 3.0f;										// 半径
+constexpr VECTOR	ENEMY_SIZE			= { 8.0f,50.0f,8.0f };						// サイズ
+constexpr VECTOR	ENEMY_SPEED			= { 0.0f,0.0f,-0.5f };						// スピード
+constexpr float		ENEMY_FLENGTH		= 300.0f;									// 移動距離
+constexpr int		COREPOS_RAND_RANGE	= static_cast<int>(50.0f - RADIUS * 2.0f);	// コアのランダム値
+constexpr int		SPHERE_DIV_NUM		= 16;										// コアの球の分割値
+constexpr VECTOR	ENEMY_SCALE			= { 5.0f,5.0f,5.0f };						// スケール
+constexpr float		ABLE_SEEN			= 5.0f;										// 見えるように位置調整
 
 CEnemy::CEnemy() {
 	memset(&vPos, 0, sizeof(VECTOR));
@@ -44,7 +45,7 @@ void CEnemy::Draw() {
 		MV1DrawModel(Handle);
 #ifndef MY_DEBUG
 		VECTOR CorePos = vCorePos;
-		CorePos.z -= 5.0f;
+		CorePos.z -= ABLE_SEEN;
 		DrawSphere3D(CorePos, radius, SPHERE_DIV_NUM, RED, RED, true);
 #endif // !MY_DEBUG
 	}
@@ -59,8 +60,9 @@ void CEnemy::Step(){
 	// 当たり判定の座標の計算
 	vCorePos = VAdd(vCorePos, vSpd);
 
-	if (vPos.x > ENEMY_FLENGTH || vPos.x < -ENEMY_FLENGTH
-		|| vPos.z > ENEMY_FLENGTH || vPos.z < -ENEMY_FLENGTH) {
+	//敵の移動制限
+	if (vPos.x > ENEMY_FLENGTH || vPos.x < -ENEMY_FLENGTH || 
+		vPos.z > ENEMY_FLENGTH || vPos.z < -ENEMY_FLENGTH) {
 		isActive = false;
 	}
 
@@ -86,7 +88,7 @@ bool CEnemy::RequestEnemy(const VECTOR& pos, const VECTOR& spd) {
 	vSpd = spd;
 	isActive = true;
 	vCorePos = vPos;
-	vCorePos.y = static_cast<float>(GetRand(COREPOS_RAND_RANGE));
+	vCorePos.y = static_cast<float>(GetRand(COREPOS_RAND_RANGE)) + RADIUS;
 
 	//更新
 	MV1SetPosition(Handle, vPos);

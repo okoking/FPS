@@ -43,10 +43,6 @@ void CFade::Draw(){
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_iAlpha);
 	DrawBox(0, 0, SCREEN_SIZE_X, SCREEN_SIZE_Y, RED, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-
-	DrawFormatString(0, 32, WHITE, "%d", m_iAlpha);
-	DrawFormatString(0, 48, WHITE, "%d", m_bIsEndFlag);
-	DrawFormatString(0, 64, WHITE, "%d", m_eState);
 }
 
 // フェード開始

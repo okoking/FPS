@@ -31,10 +31,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	
 	// 書き順いい感じにするやつ
 	SetWriteZBuffer3D(TRUE);
-
-	// マウスポインタの表示を消す
-	SetMouseDispFlag(FALSE);
-
 	//-----------------------------------------
 	//一番最初に１回だけやる処理をここに書く
 	// シーン

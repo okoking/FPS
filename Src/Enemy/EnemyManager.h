@@ -27,7 +27,8 @@ public:
 	void Step();
 	// 描画処理
 	void Draw();
-
+	// デバッグ表示
+	void DebugDraw();
 	// 敵情報取得
 	inline CEnemy& GetEnemy(int iID) { return m_cEnemy[iID]; }
 	inline vector<CEnemy>& GetEnemyVec() { return m_cEnemy; }
