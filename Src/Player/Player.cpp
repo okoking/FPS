@@ -5,7 +5,8 @@
 #include "../Draw3D/Draw3D.h"
 #include "../Collision/Collision.h"
 #include "../Viewpoint/Viewpoint.h"
-
+#include "../SceneManager/SceneManager.h"
+ 
 // 定義関連
 constexpr char PLAYER_MODEL_PATH[] =
 		{ "Data/Model/char/char.pmd" };				// ロードするファイル名
@@ -23,6 +24,10 @@ constexpr float PLAYER_DIR_MAG = 45.0f;				// プレイヤーの向き（倍率）
 constexpr float GRAVITY = 0.15f;					// 重力
 constexpr float JUMP_POWER = 2.5f;					// ジャンプ力
 constexpr float DANCE_INPUT_GRACE = 10.0f;			// ダンスできるまでの入力猶予
+constexpr int INIT_PLAYER_HP = 3;					// プレイヤーの初期HP
+
+constexpr int INIT_GUESTHP = 2;					// 客の初期HP
+
 // コンストラクタ
 CPlayer::CPlayer() {
 	memset(&m_vPos, 0, sizeof(VECTOR));
@@ -34,6 +39,8 @@ CPlayer::CPlayer() {
 	m_iHndl = -1;
 	isLanding = false;
 	m_Dir = DIR_TOP;
+	m_PlayerHp = 0;
+	g_GuestHp = 0;
 }
 
 // デストラクタ
@@ -51,6 +58,8 @@ void CPlayer::Init(){
 	m_CameraForcusPos = m_vPos;
 	m_eState = PLAYER_STATE_WAIT;
 	m_Dir = DIR_TOP;
+	m_PlayerHp = INIT_PLAYER_HP;
+	g_GuestHp = INIT_GUESTHP;
 
 	isLanding = true;
 }
@@ -119,6 +128,18 @@ void CPlayer::CameraForcuMovement()
 			m_CameraForcusPos.y = m_vNextPos.y;
 		else
 			m_CameraForcusPos.y += m_vSpeed.y / FORCUS_SPEED_MAG;
+	}
+}
+
+// プレイヤーの体力減算用
+void CPlayer::SubPlayerhp()
+{
+	// プレイヤーの体力減算用
+	m_PlayerHp--;
+
+	// プレイヤーの体力が0になったならすぐにリザルトへ
+	if (m_PlayerHp <= 0) {
+		SceneBace::g_scene_ID = Clear_Scene;
 	}
 }
 

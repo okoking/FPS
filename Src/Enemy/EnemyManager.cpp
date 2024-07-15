@@ -59,7 +59,7 @@ void CEnemyManager::Step()
 	// 敵の移動処理
 	for (int i = 0; i < m_cEnemy.size(); i++) {
 		m_cEnemy[i].Step();
-		if (m_cEnemy[i].IsActive())
+		if (m_cEnemy[i].GetIsActive())
 			iEnemyCnt++;
 	}
 
@@ -80,7 +80,7 @@ void CEnemyManager::Draw()
 {
 	VECTOR EnemyPos;
 	for (int i = 0; i < m_cEnemy.size(); i++) {
-		if (!m_cEnemy[i].IsActive())continue;
+		if (!m_cEnemy[i].GetIsActive())continue;
 
 		// 敵の座標サイズの半分上に表示
 		EnemyPos = m_cEnemy[i].GetPos();
@@ -95,7 +95,7 @@ void CEnemyManager::DebugDraw()
 {
 	VECTOR EnemyPos;
 	for (int i = 0; i < m_cEnemy.size(); i++) {
-		if (!m_cEnemy[i].IsActive())continue;
+		if (!m_cEnemy[i].GetIsActive())continue;
 
 		// 敵の座標サイズの半分上に表示
 		EnemyPos = m_cEnemy[i].GetPos();

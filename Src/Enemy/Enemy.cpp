@@ -1,5 +1,8 @@
 #include "Enemy.h"
 #include "../Sound/SoundManager.h"
+#include "../Player/Player.h"
+#include "../SceneManager/SceneManager.h"
+
 constexpr float		RADIUS				= 3.0f;										// 半径
 constexpr VECTOR	ENEMY_SIZE			= { 8.0f,50.0f,8.0f };						// サイズ
 constexpr VECTOR	ENEMY_SPEED			= { 0.0f,0.0f,-0.5f };						// スピード
@@ -8,6 +11,8 @@ constexpr int		COREPOS_RAND_RANGE	= static_cast<int>(50.0f - RADIUS * 2.0f);	// 
 constexpr int		SPHERE_DIV_NUM		= 16;										// コアの球の分割値
 constexpr VECTOR	ENEMY_SCALE			= { 5.0f,5.0f,5.0f };						// スケール
 constexpr float		ABLE_SEEN			= 5.0f;										// 見えるように位置調整
+
+int CPlayer::g_GuestHp;
 
 CEnemy::CEnemy() {
 	memset(&vPos, 0, sizeof(VECTOR));
@@ -63,6 +68,13 @@ void CEnemy::Step(){
 	//敵の移動制限
 	if (vPos.x > ENEMY_FLENGTH || vPos.x < -ENEMY_FLENGTH || 
 		vPos.z > ENEMY_FLENGTH || vPos.z < -ENEMY_FLENGTH) {
+
+		// 行動範囲外に行ったら客にダメージ
+		CPlayer::g_GuestHp--;
+		// リザルトに行くか体力チェック
+		if (CPlayer::g_GuestHp <= 0) {
+			SceneBace::g_scene_ID = Clear_Scene;
+		}
 		isActive = false;
 	}
 

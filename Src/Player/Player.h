@@ -35,6 +35,8 @@ public:
 	CPlayer();
 	~CPlayer();
 
+	static int g_GuestHp;	// 客の体力
+
 	// 初期化
 	void Init();
 
@@ -52,6 +54,9 @@ public:
 
 	// カメラの移動
 	void CameraForcuMovement();
+
+	// プレイヤーの体力減算用
+	void SubPlayerhp();
 
 	// NextPos取得用
 	VECTOR GetNextPos() { return m_vNextPos; }
@@ -104,6 +109,7 @@ private:
 	bool isLanding;				// 着地しているかどうか
 	PlayerDirection m_Dir;		// プレイヤーの移動方向
 
+	int m_PlayerHp;				// プレイヤーの体力
 	// プレイヤー移動処理
 	void Moving();
 	// 球発射処理

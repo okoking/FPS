@@ -1,6 +1,7 @@
 #pragma once
 #include "../Common.h"
 
+// 敵クラス　　
 class CEnemy {
 private:
 	VECTOR	vPos;		//座標
@@ -23,7 +24,7 @@ public:
 	void Exit();
 
 	//生存判定を返す
-	bool IsActive() { return isActive; }
+	bool GetIsActive() { return isActive; }
 	//座標を取得
 	VECTOR GetPos() { return vPos; }
 	//スピードを取得
@@ -38,7 +39,7 @@ public:
 	void SetPosition(VECTOR _vPos) { vPos = _vPos; }
 	// リクエスト
 	bool RequestEnemy(const VECTOR& pos, const VECTOR& spd);
-
+	
 	// 当たり判定の処理
 	void HitCalc();
 };

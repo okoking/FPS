@@ -101,9 +101,12 @@ void ScenePlay::Step()
 	//カメラ更新処理
 	cCameraManager.Step(cPlayer.GetCameraForcusPos());
 
-	//エンターキー入力でクリア画面へ
-	if (Input::Key::Push(KEY_INPUT_RETURN))
-		SceneBace::g_scene_ID = Clear_Scene;
+	// デバッグ中
+	if (cCameraManager.GetCameraID() == CCameraManager::CAMERA_ID_DEBUG) {
+		//エンターキー入力でクリア画面へ
+		if (Input::Key::Push(KEY_INPUT_RETURN))
+			SceneBace::g_scene_ID = Clear_Scene;
+	}
 
 	// Oキー入力でデバッグ表示切替
 	if (Input::Key::Push(KEY_INPUT_O)) {

@@ -2,14 +2,14 @@
 #include "Shot.h"
 #include "../Common.h"
 
-const int PL_SHOT_NUM = 200;
-
 class ShotManager
 {
 private:
 	// プレイヤーのショット
 	// 本当はメモリの動的確保が望ましい
 	vector <CShot> cPlayerShot;
+	int m_KillCnt;				// 倒した数
+
 public:
 	// コンストラクタ・デストラクタ
 	ShotManager();
@@ -31,4 +31,7 @@ public:
 	// プレイヤーのショット
 	inline CShot& GetcPlayerShot(int iId) { return cPlayerShot[iId]; }
 	inline vector <CShot>& GetcPlayerShotVec() { return cPlayerShot; }
+
+	// m_KillCnt加算用
+	void AddKillCnt();
 };

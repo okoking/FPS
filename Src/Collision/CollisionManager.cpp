@@ -16,7 +16,7 @@ void CollisionManager::CheckHitShotToEnemy(CEnemyManager& cEnemyManager, ShotMan
 		{
 			// プレイヤー情報を取得し、生成されていなければ次へ
 			CEnemy& cEnemy = cEnemyManager.GetEnemy(j);
-			if (!cEnemy.IsActive())continue;
+			if (!cEnemy.GetIsActive())continue;
 
 			// 座標と半径を取得
 			VECTOR vShotPos, vEnemyCorePos;
@@ -32,6 +32,8 @@ void CollisionManager::CheckHitShotToEnemy(CEnemyManager& cEnemyManager, ShotMan
 				// ここまでくれば当たっている
 				cPlayerShot.HitCalc();
 				cEnemy.HitCalc();
+				// キルカウント加算
+				cShotManager.AddKillCnt();
 			}
 		}
 	}
@@ -138,16 +140,16 @@ void CollisionManager::CheckHitPlayerToEnemy(CPlayer& cPlayer, CEnemyManager& cE
 	for (int i = 0; i < cEnemyManager.GetEnemyVec().size(); i++){
 		// 敵情報を取得し、生成されていなければ次へ
 		CEnemy& cEnemy = cEnemyManager.GetEnemy(i);
-
-		if (!cEnemy.IsActive())continue;
+		if (!cEnemy.GetIsActive())continue;
 
 		VECTOR EnemyPos = cEnemy.GetPos();
-		//EnemyPos
-
 		VECTOR EnemySize = cEnemy.GetSize();
 
 		if (Collision::IsHitRect3D(VGet(m_CentervPos.x, m_CentervNextPos.y, m_CentervPos.z), AvSize, EnemyPos, EnemySize)) {
-			SceneBace::g_scene_ID = Clear_Scene;
+			// 敵の当たり判定
+			cEnemy.HitCalc();
+			// プレイヤーの体力減算用
+			cPlayer.SubPlayerhp();
 		}
 	}
 

@@ -7,6 +7,7 @@
 #include "Fade/Fade.h"
 #include "Common.h"
 #include "Viewpoint/Viewpoint.h"
+#include "Sound/SoundManager.h"
 
 // Win32アプリケーションは WinMain関数 から始まる
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
@@ -75,6 +76,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	//-----------------------------------------
 	//最後に１回だけやる処理をここに書く
+	CSoundManager::Exit();
 
 	//-----------------------------------------
 	//DXライブラリの後処理
@@ -86,7 +88,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 // 初期化祭り
 void InitGame()
 {
+	// 入力
 	Input::Init();
+	// サウンド
+	CSoundManager::Init();
+	CSoundManager::LoadAllData();
 }
 
 // staticのStepまとめ
